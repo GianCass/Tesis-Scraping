@@ -17,6 +17,33 @@ from selenium.webdriver.common.action_chains import ActionChains
 class PageDownloaderSpider(scrapy.Spider):
     name = 'page_downloader'
 
+    def estructura_incompleta(response):
+        esperado = ['div#main-content', "div.render-container", 'div.product-list', 'script[type="application/ld+json"]']
+        for selector in esperado:
+            if not response.css(selector):
+                return True
+        return False
+    
+    def contenido_muy_corto(response):
+        return len(response.text) < 10000
+    
+    def pagina_con_render_dinamico(response):
+        texto = response.text.lower()
+        patrones = [
+            "enable javascript", 
+            "please wait", 
+            "verifying browser",
+            "cloudflare", 
+            "press and hold", 
+            "checking your browser before accessing"
+        ]
+        return any(p in texto for p in patrones)
+
+
+
+
+
+
     def __init__(self, *args, **kwargs):
         super(PageDownloaderSpider, self).__init__(*args, **kwargs)
         self.counter = 1
@@ -65,6 +92,15 @@ class PageDownloaderSpider(scrapy.Spider):
             return self.fallback_with_selenium(response)
 
         self._guardar_html(response.body)
+    
+    def necesita_selenium(self, response):
+        return (
+            self.estructura_incompleta(response) or
+            self.contenido_muy_corto(response) or
+            self.pagina_con_render_dinamico(response)
+        )
+
+
 
     def fallback_with_selenium(self, failure):
         if hasattr(failure, 'request'):
@@ -116,7 +152,7 @@ class PageDownloaderSpider(scrapy.Spider):
             time.sleep(random.uniform(2.0, 4.5))
 
             if "Mantén presionado el botón" or "Verifica tu identidad" or "Verifica" or "Mantén" in driver.page_source:
-                print("⚠️ Captcha detectado. Intentando resolver...")
+                print("⚠️ Captcha detectado. Intentando resolver " + str(self.counter) + " con Selenium... " + url)
 
                 try:
                     WebDriverWait(driver, 10).until(
@@ -126,9 +162,9 @@ class PageDownloaderSpider(scrapy.Spider):
                     button = driver.find_element(By.XPATH, '//div[@id="px-captcha"]//div[contains(@class, "captcha-button")]')
 
                     actions = ActionChains(driver)
-                    actions.click_and_hold(button).pause(5).release().perform()
+                    actions.click_and_hold(button).pause(11).release().perform()
                     print("✅ Captcha presionado y soltado.")
-                    time.sleep(5)
+                    time.sleep(15)
 
                 except Exception as e:
                     print(f"❌ Error interactuando con el captcha: {e}")
@@ -150,6 +186,15 @@ class PageDownloaderSpider(scrapy.Spider):
             self.logger.warning("No se encontró <body> en el HTML.")
             return
 
+        # Eliminar todos los <script> del <body>
+        for script in body.find_all('script'):
+            script.decompose()
+
+        # Eliminar el div con id="styles_iconpack" si existe
+        styles_iconpack_div = body.find('div', id='styles_iconpack')
+        if styles_iconpack_div:
+            styles_iconpack_div.decompose()
+
         output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
         os.makedirs(output_dir, exist_ok=True)
         filename = f"{self.counter}.html"
@@ -159,4 +204,4 @@ class PageDownloaderSpider(scrapy.Spider):
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(str(body))
 
-        self.logger.info(f"Guardado solo <body>: {filepath}")
+        self.logger.info(f"Guardado solo <body>: {filepath}\n\n\n\n\n")
