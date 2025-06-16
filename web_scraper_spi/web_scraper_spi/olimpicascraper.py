@@ -8,52 +8,52 @@ import json
 
 # URLs de Olimpica (agrega más URLs si lo deseas)
 urlsaScrapear = [
-   "https://www.olimpica.com/huevo-aa-rojo-pet-kikes-30un-7707304621100-1353948/p",
-  "https://www.olimpica.com/huevo-aa-rojo-vinipel-30-un-7702420910015/p",
-  "https://www.olimpica.com.co/huevo-santa-anita-aa-rojo-24un-7706772100582-973681/p",
-  "https://www.olimpica.com/huevo-campesino-nutriavicola-rojo-x30un-7702349030375-1006331/p",
-  "https://www.olimpica.com/arroz-diana-5-kg-7702511000045-566554/p",
-  "https://www.olimpica.com/arroz-sabroson-5-kg-7707105805105-2000025/p",
-  "https://www.olimpica.com/arroz-olimpica-10-kg-m-bult/p",
-  "https://www.olimpica.com/arroz-donapepa-153-5kg-7702231300043-1393182/p",
-  "https://www.olimpica.com/arroz-mi-arroz-3-kg-7707105814060-1635734/p",
-  "https://www.olimpica.com/arroz-dona-rosa-paca-25-und-12-5-kg/p",
-  "https://www.olimpica.com/pan-tajado-bimbo-integral-650-g-7705326073365--754200/p",
-  "https://www.olimpica.com/pan-tajado-integral-centeno-malta-comapan-400g-7702432217928--5085884/p",
-  "https://www.olimpica.com/pan-bimbo-vital-multicereal-500-g-7705326073907--811942/p",
-  "https://www.olimpica.com/pan-sagu-mauka-450g/p",
-  "https://www.olimpica.com/pan-integral-olimpica-molde-540-g-25060263--350168/p",
-  "https://www.olimpica.com/pan-tajado-mama-ines-integral-440-g-7705326019264--691537/p",
-  "https://www.olimpica.com/leche-uht-alpina-ent-cj-1-l/p",
-  "https://www.olimpica.com/leche-uht-colanta-entera-1000ml-x6/p",
-  "https://www.olimpica.com/leche-alqueria-original-1100ml-x-6un/p",
-  "https://www.olimpica.com/leche-uht-olimpica/p",
-  "https://www.olimpica.com/leche-uht-medalla-oro-entera-900ml-x6-7701008629332-2146935/p",
-  "https://www.olimpica.com/tomate-pera-la-economica-1-kg-7701008112605-2569/p?skuId=2569",
-  "https://www.olimpica.com/tomat-chonto-selecto-la-giralda-24045223-12848/p?skuId=12848",
-  "https://www.olimpica.com/tomate-tamarillo-24030519-6572/p?skuId=6572",
-  "https://www.olimpica.com/tomate-rio-grande-ciruelo/p?skuId=747",
-  "https://www.olimpica.com/tomate-picados-hunts-411-g-27000380406--1104106/p",
-  "https://www.olimpica.com/banano-bocadillo-7704862182463-4456/p?skuId=4456",
-  "https://www.olimpica.com/banano-maduro/p?skuId=750",
-  "https://www.olimpica.com/cebolla-cabezona-blanca/p?skuId=613",
-  "https://www.olimpica.com/cebolla-frescocampo-cabezona-blanca-kosher-1kg-7709631567830-12180/p?skuId=12180",
-  "https://www.olimpica.com/cebolla-blanca-selecta-la-giralda-24045186-12846/p?skuId=12846",
-  "https://www.olimpica.com/papa-olimpica--pastusa-por-2-5-kg-7701008005280-724/p?skuId=724",
-  "https://www.olimpica.com/papa-tradicional-mc-cain-1-kg-7707203350071-830476/p",
-  "https://www.olimpica.com/papa-medalla-oro-francesa-1000-g-7701008629578-2142591/p",
-  "https://www.olimpica.com/papa-mc-cain-facil-1-kg-7707203351184-1650663/p",
-  "https://www.olimpica.com/qso-bco-colanta-500-g/p",
-  "https://www.olimpica.com/quesito-alpina-fresco-blando-375g-7702001133628-2047338/p",
-  "https://www.olimpica.com/qso-del--vecch-3-und-210-g/p",
-  "https://www.olimpica.com/qso-medalla-oro-t-mozar-taj-250-g/p",
-  "https://www.olimpica.com/alimento-violife-mozzarella-200g/p",
-  "https://www.olimpica.com/azucar-riopaila-blanca-500-gr-7702127107022-798301/p",
-  "https://www.olimpica.com/azucar-manuelita-1-kg/p",
-  "https://www.olimpica.com/azucar-cauca-1-kg-7702059402028-26770/p",
-  "https://www.olimpica.com/azucar-mayaguez-bca-2-5kg/p",
-  "https://www.olimpica.com/azucar-blanca-olimpica-2-5-kg/p",
-  "https://www.olimpica.com/azucar-providen-blanca--2-5-kg-7702104010307-73470/p"
+    "https://www.olimpica.com/huevo-aa-rojo-pet-kikes-30un-7707304621100-1353948/p",
+    "https://www.olimpica.com/huevo-aa-rojo-vinipel-30-un-7702420910015/p",
+    "https://www.olimpica.com.co/huevo-santa-anita-aa-rojo-24un-7706772100582-973681/p",
+    "https://www.olimpica.com/huevo-campesino-nutriavicola-rojo-x30un-7702349030375-1006331/p",
+    "https://www.olimpica.com/arroz-diana-5-kg-7702511000045-566554/p",
+    "https://www.olimpica.com/arroz-sabroson-5-kg-7707105805105-2000025/p",
+    "https://www.olimpica.com/arroz-olimpica-10-kg-m-bult/p",
+    "https://www.olimpica.com/arroz-donapepa-153-5kg-7702231300043-1393182/p",
+    "https://www.olimpica.com/arroz-mi-arroz-3-kg-7707105814060-1635734/p",
+    "https://www.olimpica.com/arroz-dona-rosa-paca-25-und-12-5-kg/p",
+    "https://www.olimpica.com/pan-tajado-bimbo-integral-650-g-7705326073365--754200/p",
+    "https://www.olimpica.com/pan-tajado-integral-centeno-malta-comapan-400g-7702432217928--5085884/p",
+    "https://www.olimpica.com/pan-bimbo-vital-multicereal-500-g-7705326073907--811942/p",
+    "https://www.olimpica.com/pan-sagu-mauka-450g/p",
+    "https://www.olimpica.com/pan-integral-olimpica-molde-540-g-25060263--350168/p",
+    "https://www.olimpica.com/pan-tajado-mama-ines-integral-440-g-7705326019264--691537/p",
+    "https://www.olimpica.com/leche-uht-alpina-ent-cj-1-l/p",
+    "https://www.olimpica.com/leche-uht-colanta-entera-1000ml-x6/p",
+    "https://www.olimpica.com/leche-alqueria-original-1100ml-x-6un/p",
+    "https://www.olimpica.com/leche-uht-olimpica/p",
+    "https://www.olimpica.com/leche-uht-medalla-oro-entera-900ml-x6-7701008629332-2146935/p",
+    "https://www.olimpica.com/tomate-pera-la-economica-1-kg-7701008112605-2569/p?skuId=2569",
+    "https://www.olimpica.com/tomat-chonto-selecto-la-giralda-24045223-12848/p?skuId=12848",
+    "https://www.olimpica.com/tomate-tamarillo-24030519-6572/p?skuId=6572",
+    "https://www.olimpica.com/tomate-rio-grande-ciruelo/p?skuId=747",
+    "https://www.olimpica.com/tomate-picados-hunts-411-g-27000380406--1104106/p",
+    "https://www.olimpica.com/banano-bocadillo-7704862182463-4456/p?skuId=4456",
+    "https://www.olimpica.com/banano-maduro/p?skuId=750",
+    "https://www.olimpica.com/cebolla-cabezona-blanca/p?skuId=613",
+    "https://www.olimpica.com/cebolla-frescocampo-cabezona-blanca-kosher-1kg-7709631567830-12180/p?skuId=12180",
+    "https://www.olimpica.com/cebolla-blanca-selecta-la-giralda-24045186-12846/p?skuId=12846",
+    "https://www.olimpica.com/papa-olimpica--pastusa-por-2-5-kg-7701008005280-724/p?skuId=724",
+    "https://www.olimpica.com/papa-tradicional-mc-cain-1-kg-7707203350071-830476/p",
+    "https://www.olimpica.com/papa-medalla-oro-francesa-1000-g-7701008629578-2142591/p",
+    "https://www.olimpica.com/papa-mc-cain-facil-1-kg-7707203351184-1650663/p",
+    "https://www.olimpica.com/qso-bco-colanta-500-g/p",
+    "https://www.olimpica.com/quesito-alpina-fresco-blando-375g-7702001133628-2047338/p",
+    "https://www.olimpica.com/qso-del--vecch-3-und-210-g/p",
+    "https://www.olimpica.com/qso-medalla-oro-t-mozar-taj-250-g/p",
+    "https://www.olimpica.com/alimento-violife-mozzarella-200g/p",
+    "https://www.olimpica.com/azucar-riopaila-blanca-500-gr-7702127107022-798301/p",
+    "https://www.olimpica.com/azucar-manuelita-1-kg/p",
+    "https://www.olimpica.com/azucar-cauca-1-kg-7702059402028-26770/p",
+    "https://www.olimpica.com/azucar-mayaguez-bca-2-5kg/p",
+    "https://www.olimpica.com/azucar-blanca-olimpica-2-5-kg/p",
+    "https://www.olimpica.com/azucar-providen-blanca--2-5-kg-7702104010307-73470/p"
 ]
 
 def buscar_precio_jsonld(soup):
@@ -86,16 +86,30 @@ def buscar_nombre(soup):
     return None
 
 def buscar_precio(soup):
-    # Busca span con $ y números
+    # Busca todos los spans del precio entero (olimpica-dinamic-flags-0-x-currencyInteger)
+    enteros = soup.find_all('span', class_='olimpica-dinamic-flags-0-x-currencyInteger')
+    if len(enteros) >= 2:
+        entero_txt = enteros[0].get_text(strip=True)
+        resto_txt = enteros[1].get_text(strip=True)
+        try:
+            return int(entero_txt + resto_txt)
+        except:
+            pass
+    elif len(enteros) == 1:
+        # Si solo hay uno, usa ese valor
+        try:
+            return int(enteros[0].get_text(strip=True))
+        except:
+            pass
+
+    # Fallbacks originales
     for span in soup.find_all('span'):
         text = span.get_text(strip=True)
         if re.match(r'^\$[\d\.,]+$', text):
             return re.sub(r'[^\d,.]', '', text).replace(',', '')
-    # Busca en JSON-LD
     precio_jsonld = buscar_precio_jsonld(soup)
     if precio_jsonld:
         return precio_jsonld
-    # Busca en meta 'product:price:amount'
     meta_price = soup.find('meta', {'property': 'product:price:amount'})
     if meta_price and meta_price.get('content'):
         return meta_price['content'].strip()
