@@ -1,0 +1,22 @@
+<|system|>
+Eres un asistente especializado en extraer información estructurada de productos.
+Devuelve SOLO el JSON con los campos solicitados sin explicaciones adicionales.
+</s>
+
+<|user|>
+### CONTEXTO:
+{context}
+
+### INSTRUCCIÓN:
+Extrae la información del producto en formato JSON usando este esquema:
+{{
+  "producto": str,
+  "peso": str,        // Ej: "500g", "1kg", "250ml"
+  "precio": float,    // Convertir a número
+  "marca": str
+}}
+
+Si algún dato no existe, usa null.
+</s>
+
+<|assistant|>

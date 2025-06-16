@@ -1,0 +1,28 @@
+Las cookies son archivos de texto que se descargan en el dispositivo cuando usted visita un sitio web. Son útiles, porque le permiten a un sitio web reconocer el dispositivo de un usuario. Puede encontrar más información acerca de las cookies en: www.allaboutcookies.org o www.youronlinechoices.eu.
+El término "cookie" en realidad se refiere a una amplia gama de tecnologías, entre las que se incluyen:
+- etiquetas de píxel (imágenes gráficas transparentes que se ubican en una página web o en un email, y que indican que se ha visto una página o un email),
+- identificadores de dispositivos móviles, y
+- almacenamiento web utilizado en un software de escritorio o en dispositivos móviles.
+En esta Política utilizaremos el término "cookie" para referirnos a todas estas tecnologías, pero nos aseguraremos de proporcionarle detalles claros sobre todas ellas, de manera que pueda tomar decisiones fundamentadas acerca de la configuración de sus cookies.
+Las cookies tienen muchas funciones, como permitirle navegar entre páginas de forma eficaz, recordar sus preferencias y, en general, mejorar su experiencia de usuario. También pueden ayudar a garantizar que los anuncios que vea en línea sean más pertinentes para usted y sus intereses.
+Existen algunas categorías distintas de cookies, entre las que se incluyen:
+- Cookies de sesión y persistentes.
+Cookies de sesión: son cookies que vencen una vez que cierra su navegador web.
+Cookies persistentes: estas son cookies que permanecen en su dispositivo durante un tiempo establecido o hasta que las elimine.
+- Cookies propias y de terceros.
+Cookies propias: estas son cookies que establece el sitio web que está visitando en ese momento, ya sea de nuestra parte o por solicitud nuestra a un tercero.
+Cookies de terceros: estas son cookies que establece una entidad distinta del sitio web que está visitando. Si visita el sitio web de Corporación Favorita o utiliza el servicio de Corporación Favorita, y otra entidad establece una cookie a través de ese sitio web, sería una cookie de terceros.
+Las cookies también difieren en función del propósito para el cual se utilicen, entre ellos:
+Cookies estrictamente necesarias
+Estas cookies son fundamentales para permitirle utilizar las funciones de nuestros servicios. Sin estas cookies, no se podrán proporcionar los servicios que haya solicitado (por ejemplo, la facturación electrónica).
+En resumen, estas cookies permiten el uso de servicios que usted haya solicitado específicamente y facilitan el uso de nuestros servicios.
+Cookies de rendimiento
+Estas cookies recopilan información acerca de cómo los visitantes utilizan nuestros servicios. Estas cookies recopilan información anónima sobre las páginas visitadas. Toda la información que estas cookies recopilan es información combinada y, por lo tanto, es anónima. Solo se utiliza para mejorar el rendimiento de nuestros servicios.
+Los análisis web en los que se utilizan cookies para recopilar datos a fin de mejorar el rendimiento de un sitio web pertenecen a esta categoría. Por ejemplo, se pueden utilizar para probar diseños y garantizar que se mantenga una apariencia constante para el usuario. En esta categoría no se incluyen las cookies utilizadas para redes publicitarias orientadas o por comportamiento.
+Cookies de funcionalidad
+Estas cookies le permiten al sitio web recordar las selecciones que realiza (como su nombre de usuario, su idioma o la región en la que se encuentra) y ofrecer funciones mejores y más personales. Estas cookies también se pueden utilizar para recordar los cambios que haya realizado en el tamaño de texto, las fuentes y otras características de las páginas web que puede personalizar. La información que estas cookies recopilan se puede anonimizar y no podrán realizar un seguimiento de su actividad de navegación en otros sitios web.
+Estas cookies recuerdan sus elecciones para mejorar su experiencia.
+Si se utiliza la misma cookie para volver a realizar una focalización, también se debe incluir en la categoría de "cookies de focalización o publicidad". También podría incluir cookies que se utilizan para proporcionar una función específica, pero en caso de que esa función incluya cookies utilizadas para redes publicitarias orientadas o por comportamiento, se deben incluir en la categoría "cookies de focalización o publicidad", así como en esta categoría.
+Cookies de focalización o publicidad
+Estas cookies se utilizan para ofrecer anuncios más pertinentes para usted y sus intereses. También se utilizan para limitar la cantidad de veces que ve un anuncio, así como para ayudar a medir la eficacia de las campañas de publicidad. Generalmente las colocan las redes de publicidad con el permiso del operador del sitio web. Estas recuerdan los sitios web que haya visitado y comparten esta información con otras organizaciones, como publicistas. Muy a menudo las cookies de focalización o publicidad se vincularán con la funcionalidad del sitio proporcionada por otras organizaciones.
+Estas cookies recopilan información acerca de sus hábitos de navegación para que la publicidad sea pertinente para usted y sus intereses.
