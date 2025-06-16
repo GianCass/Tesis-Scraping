@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from urllib.parse import urlparse
 import random
 import time
 
@@ -23,23 +24,232 @@ class PageDownloaderSpider(scrapy.Spider):
             if not response.css(selector):
                 return True
         return False
-    
+
     def contenido_muy_corto(response):
         return len(response.text) < 10000
-    
+
     def pagina_con_render_dinamico(response):
         texto = response.text.lower()
         patrones = [
-            "enable javascript", 
-            "please wait", 
+            "enable javascript",
+            "please wait",
             "verifying browser",
-            "cloudflare", 
-            "press and hold", 
+            "cloudflare",
+            "press and hold",
             "checking your browser before accessing"
         ]
         return any(p in texto for p in patrones)
 
 
+
+    # def resolver_captcha_wallmartmx(self, driver):
+    #     try:
+    #         print("🔐 Resolviendo captcha de Walmart MX (versión dinámica)...")
+
+    #         # 1. Esperar a que aparezca el contenedor principal del captcha
+    #         WebDriverWait(driver, 15).until(
+    #             EC.presence_of_element_located((By.XPATH,
+    #                 "//div[@role='button' and .//*[contains(text(), 'Mantén presionado')]]"))
+    #         )
+
+    #         # 2. Localizar el botón mediante la combinación de atributos y texto
+    #         button = WebDriverWait(driver, 15).until(
+    #             EC.element_to_be_clickable((By.XPATH,
+    #                 "//div[@role='button' and .//*[contains(text(), 'Mantén presionado')]]//p")))
+
+    #         # 3. Scroll suave al elemento
+    #         driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", button)
+    #         time.sleep(0.5)
+
+    #         # 4. Acción de mantener presionado con verificación de cambios
+    #         action = ActionChains(driver)
+    #         action.move_to_element(button).click_and_hold().perform()
+    #         print("⏳ Manteniendo presionado el botón...")
+
+    #         # 5. Espera adaptativa con detección de cambios
+    #         start_time = time.time()
+    #         pressed_successfully = False
+
+    #         while time.time() - start_time < 25:  # Margen de 25 segundos
+    #             try:
+    #                 # Verificar cambios visuales en el botón
+    #                 current_style = button.value_of_css_property("color")
+    #                 if "rgb(255, 255, 255)" in current_style:  # Ejemplo de cambio de color
+    #                     pressed_successfully = True
+    #                     print("✅ Cambio de estilo detectado")
+    #                     break
+
+    #                 # Verificar si aparece el checkmark
+    #                 checkmark = driver.find_elements(By.XPATH, "//*[local-name()='svg' and .//*[local-name()='path' and contains(@d, 'M9')]]")
+    #                 if checkmark:
+    #                     pressed_successfully = True
+    #                     print("✅ Checkmark detectado")
+    #                     break
+
+    #                 time.sleep(0.5)
+    #             except:
+    #                 time.sleep(0.5)
+    #                 continue
+
+    #         # 6. Liberar el botón
+    #         action.release().perform()
+    #         print("🔄 Botón liberado")
+
+    #         # 7. Verificación final
+    #         if not pressed_successfully:
+    #             print("⚠️ No se detectaron cambios visuales, pero se completó el tiempo")
+
+    #         # Esperar posible redirección o confirmación
+    #         time.sleep(3)
+    #         print("✅ Proceso de captcha completado")
+
+    #     except Exception as e:
+    #         print(f"❌ Error crítico resolviendo captcha: {str(e)}")
+    #         raise
+
+    def resolver_captcha_wallmartmx(self, driver):
+        try:
+            print("🔐 Resolviendo captcha de Walmart MX (solución mejorada)...")
+
+            # 1. Esperar a que el desafío esté completamente cargado
+            WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((By.XPATH,
+                    "//*[@role='button' and contains(., 'Mantén presionado')]"))
+            )
+
+            # 2. Localizar el botón principal usando la estructura jerárquica
+            button_container = WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.XPATH,
+                    "//div[contains(@class, 'button') and .//p[contains(text(), 'Mantén presionado')]]"))
+            )
+
+            # 3. Localizar el elemento de texto específico
+            button_text = button_container.find_element(By.XPATH,
+                ".//p[contains(@class, 'text') and contains(text(), 'Mantén presionado')]")
+
+            # 4. Scroll y posicionamiento preciso
+            driver.execute_script("""
+                arguments[0].scrollIntoView({
+                    behavior: 'auto',
+                    block: 'center',
+                    inline: 'center'
+                });
+            """, button_container)
+
+            # 5. Simulación de acción humana con eventos precisos
+            action = ActionChains(driver)
+
+            # Movimiento inicial al contenedor
+            action.move_to_element(button_container)
+            action.pause(random.uniform(0.3, 0.7))
+
+            # Movimiento preciso al texto
+            action.move_to_element(button_text)
+            action.pause(random.uniform(0.2, 0.5))
+
+            # Presionar y mantener
+            action.click_and_hold()
+            action.pause(0.1)
+            action.perform()
+
+            print("⏳ Manteniendo presionado el botón (simulación mejorada)...")
+
+            # 6. Monitoreo avanzado con detección de cambios
+            start_time = time.time()
+            progress_detected = False
+            hold_time = random.uniform(18.0, 22.0)  # Tiempo variable entre 18-22 segundos
+
+            while time.time() - start_time < hold_time:
+                try:
+                    # Verificar cambios en el contenedor principal
+                    current_bg = button_container.value_of_css_property("background-color")
+                    if "rgba(0, 0, 0, 0)" not in current_bg:  # Cambio de fondo detectado
+                        progress_detected = True
+                        print("✅ Cambio de fondo detectado")
+                        break
+
+                    # Verificar animación de progreso
+                    progress_bar = button_container.find_elements(By.XPATH,
+                        ".//div[contains(@style, 'width:') and contains(@style, 'background')]")
+                    if progress_bar and progress_bar[0].value_of_css_property("width") != "0px":
+                        progress_detected = True
+                        print("✅ Barra de progreso detectada")
+                        break
+
+                    # Pequeños movimientos aleatorios para parecer humano
+                    if random.random() > 0.7:
+                        action.move_by_offset(
+                            random.randint(-3, 3),
+                            random.randint(-2, 2)
+                        ).pause(0.1).perform()
+
+                    time.sleep(0.3)
+                except:
+                    time.sleep(0.3)
+                    continue
+
+            # 7. Liberación con eventos completos
+            action.release()
+            action.move_by_offset(1, 1)  # Pequeño movimiento al soltar
+            action.pause(0.2)
+            action.perform()
+
+            # 8. Esperar confirmación final
+            try:
+                WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.XPATH,
+                        "//*[contains(@class, 'success') or contains(@class, 'checkmark')]")))
+                print("✅ Verificación de captcha exitosa")
+            except:
+                if progress_detected:
+                    print("⚠️ No se encontró confirmación visual pero se detectó progreso")
+                else:
+                    print("⚠️ No se detectó confirmación visual del captcha")
+
+            # Espera final aleatoria antes de continuar
+            time.sleep(random.uniform(1.5, 3.0))
+
+        except Exception as e:
+            print(f"❌ Error en solución mejorada: {str(e)}")
+
+            # Intentar solución de emergencia basada en el issue de GitHub
+            try:
+                print("🔄 Intentando método de emergencia basado en eventos directos...")
+                driver.execute_script("""
+                    const buttons = document.querySelectorAll('[role="button"]');
+                    for (const btn of buttons) {
+                        if (btn.textContent.includes('Mantén presionado')) {
+                            const mouseDown = new MouseEvent('mousedown', { bubbles: true });
+                            btn.dispatchEvent(mouseDown);
+                            setTimeout(() => {
+                                const mouseUp = new MouseEvent('mouseup', { bubbles: true });
+                                btn.dispatchEvent(mouseUp);
+                            }, 20000);
+                            break;
+                        }
+                    }
+                """)
+                time.sleep(22)
+                print("✅ Método de emergencia ejecutado")
+            except Exception as fallback_error:
+                print(f"⚠️ Método de emergencia también falló: {str(fallback_error)}")
+                raise
+
+
+
+
+
+
+
+    def captcha_identification(self, driver, url):
+        domain = urlparse(url).netloc.lower()
+
+        if "super.walmart.com.mx" in domain or "walmart.com.mx" in domain:
+            self.resolver_captcha_wallmartmx(driver)
+        elif "amazon" in domain:
+            print("else")
+        else:
+            print("⚠️ No hay función específica para resolver captcha de:", domain)
 
 
 
@@ -87,12 +297,15 @@ class PageDownloaderSpider(scrapy.Spider):
             return self.fallback_with_selenium(response)
 
         body_text = response.text.lower()
+
         if "mantén presionado el botón" in body_text or "verifica tu identidad" in body_text:
             print("⚠️ Captcha detectado en Scrapy. Usando Selenium como fallback...")
             return self.fallback_with_selenium(response)
 
         self._guardar_html(response.body)
-    
+
+
+
     def necesita_selenium(self, response):
         return (
             self.estructura_incompleta(response) or
@@ -115,7 +328,7 @@ class PageDownloaderSpider(scrapy.Spider):
 
         try:
             options = Options()
-            options.add_argument("--headless")
+            # options.add_argument("--headless")
             options.add_argument("--disable-gpu")
             options.add_argument("--window-size=1920,1080")
 
@@ -151,23 +364,18 @@ class PageDownloaderSpider(scrapy.Spider):
 
             time.sleep(random.uniform(2.0, 4.5))
 
-            if "Mantén presionado el botón" or "Verifica tu identidad" or "Verifica" or "Mantén" in driver.page_source:
-                print("⚠️ Captcha detectado. Intentando resolver " + str(self.counter) + " con Selenium... " + url)
+            captcha_indicators = [
+                "mantén presionado el botón",
+                "captcha",
+                "verifica tu identidad",
+                "verifica",
+                "mantén"
+            ]
 
-                try:
-                    WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located((By.ID, "px-captcha"))
-                    )
+            if any(word in driver.page_source.lower() for word in captcha_indicators):
+                print("⚠️ Captcha detectado. Intentando resolver", self.counter, "con Selenium...", url)
+                self.captcha_identification(driver, url)
 
-                    button = driver.find_element(By.XPATH, '//div[@id="px-captcha"]//div[contains(@class, "captcha-button")]')
-
-                    actions = ActionChains(driver)
-                    actions.click_and_hold(button).pause(11).release().perform()
-                    print("✅ Captcha presionado y soltado.")
-                    time.sleep(15)
-
-                except Exception as e:
-                    print(f"❌ Error interactuando con el captcha: {e}")
 
             page_source = driver.page_source
             driver.quit()
@@ -204,4 +412,4 @@ class PageDownloaderSpider(scrapy.Spider):
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(str(body))
 
-        self.logger.info(f"Guardado solo <body>: {filepath}\n\n\n\n\n")
+        self.logger.info(f"Guardado solo <body> para {self.counter}: {filepath}\n\n\n\n\n")
