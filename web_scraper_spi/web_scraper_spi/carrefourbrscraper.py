@@ -49,7 +49,6 @@ urlsaScrapear = [
     "https://mercado.carrefour.com.br/file-de-frango-peito-congelado-sem-osso-sadia-1kg-7087942/p",
     "https://mercado.carrefour.com.br/file-de-peito-de-frango-congelado-korin-boa-pedida-700g-3170586/p",
     "https://mercado.carrefour.com.br/coxinha-da-asa-de-frango-iqf-lar-700g-3438902/p",
-    "https://mercado.carrefour.com.br/acucar-refinado-uniao-1kg-197564/p",
     "https://mercado.carrefour.com.br/acucar-cristal-organico-native-1kg-2176556/p",
     "https://mercado.carrefour.com.br/acucar-cristal-caravelas-2kg/p",
     "https://mercado.carrefour.com.br/acucar-refinado-carrefour-1kg-5699614/p",
