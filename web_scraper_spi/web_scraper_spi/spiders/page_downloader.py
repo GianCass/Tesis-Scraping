@@ -51,21 +51,6 @@ class PageDownloaderSpider(scrapy.Spider):
 
 
 
-
-
-    def captcha_identification(self, driver, url):
-        domain = urlparse(url).netloc.lower()
-
-        if "super.walmart.com.mx" in domain or "walmart.com.mx" in domain:
-            self.resolver_captcha_wallmartmx(driver)
-        elif "amazon" in domain:
-            print("else")
-        else:
-            print("⚠️ No hay función específica para resolver captcha de:", domain)
-
-
-
-
     def __init__(self, *args, **kwargs):
         super(PageDownloaderSpider, self).__init__(*args, **kwargs)
         self.counter = 1
@@ -80,16 +65,17 @@ class PageDownloaderSpider(scrapy.Spider):
             if os.path.exists(self.urls_dinamicas_file):
                 with open(self.urls_dinamicas_file, 'r') as f:
                     for linea in f:
-                        partes = linea.strip().split(',')
+                        partes = linea.strip().split(', ', 1)
                         if not partes or len(partes) < 1:
                             continue
                         url = partes[0].strip()
+                        captcha_tipo = partes[1].strip()
                         if url:
                             print(f"⚡ Usando Selenium directo para dinámica: {url}")
 
-                            # Simulamos un objeto de tipo `failure` como el que recibiría `errback`
                             fake_failure = type('FakeFailure', (), {
-                                'request': type('RequestMock', (), {'url': url})()
+                                'request': type('RequestMock', (), {'url': url})(),
+                                'captcha_tipo': captcha_tipo
                             })()
                             self.fallback_with_selenium(fake_failure)
 
@@ -97,10 +83,11 @@ class PageDownloaderSpider(scrapy.Spider):
             if os.path.exists(self.urls_estaticas_file):
                 with open(self.urls_estaticas_file, 'r') as f:
                     for linea in f:
-                        partes = linea.strip().split(',')
+                        partes = linea.strip().split(', ', 1)
                         if not partes or len(partes) < 1:
                             continue
                         url = partes[0].strip()
+                        captcha_tipo = partes[1].strip()
                         if url:
                             print(f"🌐 Usando Scrapy para estática: {url}")
                             headers = {
@@ -117,7 +104,8 @@ class PageDownloaderSpider(scrapy.Spider):
                                 callback=self.save_page,
                                 errback=self.fallback_with_selenium,
                                 headers=headers,
-                                dont_filter=True
+                                dont_filter=True,
+                                meta={'captcha_tipo': captcha_tipo}
                             )
 
         except Exception as e:
@@ -129,10 +117,22 @@ class PageDownloaderSpider(scrapy.Spider):
             return self.fallback_with_selenium(response)
 
         body_text = response.text.lower()
+        captcha_tipo = response.meta.get('captcha_tipo', 'no')
 
-        if "mantén presionado el botón" in body_text or "verifica tu identidad" in body_text:
-            print("⚠️ Captcha detectado en Scrapy. Usando Selenium como fallback...")
-            return self.fallback_with_selenium(response)
+        if (
+            (captcha_tipo == "cloudflare" and ("Verify you are human by completing the action below." or "checking your browser before accessing" or "verify you are human by completing the action below." or "Verify you are human" or "verify you are human" or "verifica que eres humano" or "confirma que eres humano" or "Verificando tu navegador antes de") in body_text)
+            or (captcha_tipo == "recaptcha" and ("recaptcha" or "I'm not a robot" or "i'm not a robot" or "No soy un robot" or "no soy un robot") in body_text)
+            or "mantén presionado el botón" in body_text
+            or "verifica tu identidad" in body_text
+        ):
+            print(f"⚠️⚠️ Captcha detectado ({captcha_tipo}) en Scrapy. Usando Selenium como fallback... ⚠️⚠️")
+
+            fake_failure = type('FakeFailure', (), {
+                'request': type('RequestMock', (), {'url': response.url})(),
+                'captcha_tipo': captcha_tipo
+            })()
+
+            return self.fallback_with_selenium(fake_failure)
 
         self._guardar_html(response.body)
 
@@ -150,8 +150,10 @@ class PageDownloaderSpider(scrapy.Spider):
     def fallback_with_selenium(self, failure):
         if hasattr(failure, 'request'):
             url = failure.request.url
+            captcha_tipo = getattr(failure, 'captcha_tipo', 'no')
         elif hasattr(failure, 'value') and hasattr(failure.value, 'response'):
             url = failure.value.response.url
+            captcha_tipo = 'no' #default
         else:
             self.logger.error("Error desconocido en fallback.")
             return
@@ -182,7 +184,10 @@ class PageDownloaderSpider(scrapy.Spider):
             })
 
             print(f"Cargando con Selenium: {url}")
+
             driver.get(url)
+
+            time.sleep(random.uniform(2.0, 4.5))
 
             actions = ActionChains(driver)
             actions.move_by_offset(random.randint(100, 400), random.randint(100, 400)).perform()
@@ -193,6 +198,16 @@ class PageDownloaderSpider(scrapy.Spider):
             time.sleep(random.uniform(0.5, 1.2))
             driver.execute_script("window.scrollTo(0, 0);")
 
+            page_source = driver.page_source.lower()
+
+            if captcha_tipo == "cloudflare" and ("Verify you are human by completing the action below." or "checking your browser before accessing" or "verify you are human by completing the action below." or "Verify you are human" or "verify you are human" or "verifica que eres humano" or "confirma que eres humano" or "Verificando tu navegador antes de") in page_source:
+                print("⚠️⚠️ Captcha Cloudflare detectado! ⚠️⚠️")
+                # aquí podrías intentar resolver o esperar más
+
+            elif captcha_tipo == "recaptcha" and ("recaptcha" or "I'm not a robot" or "i'm not a robot" or "No soy un robot" or "no soy un robot") in page_source:
+                print("⚠️⚠️ Captcha reCAPTCHA detectado! ⚠️⚠️")
+                # aquí podrías integrar resolución si es necesario
+
             try:
                 WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.TAG_NAME, "body"))
@@ -202,17 +217,17 @@ class PageDownloaderSpider(scrapy.Spider):
 
             time.sleep(random.uniform(2.0, 4.5))
 
-            captcha_indicators = [
-                "mantén presionado el botón",
-                "captcha",
-                "verifica tu identidad",
-                "verifica",
-                "mantén"
-            ]
+            # captcha_indicators = [
+            #     "mantén presionado el botón",
+            #     "captcha",
+            #     "verifica tu identidad",
+            #     "verifica",
+            #     "mantén"
+            # ]
 
-            if any(word in driver.page_source.lower() for word in captcha_indicators):
-                print("⚠️ Captcha detectado. Intentando resolver", self.counter, "con Selenium...", url)
-                self.captcha_identification(driver, url)
+            # if any(word in driver.page_source.lower() for word in captcha_indicators):
+            #     print("⚠️ Captcha detectado. Intentando resolver", self.counter, "con Selenium...", url)
+            #     self.captcha_identification(driver, url)
 
 
             page_source = driver.page_source
@@ -232,11 +247,9 @@ class PageDownloaderSpider(scrapy.Spider):
             self.logger.warning("No se encontró <body> en el HTML.")
             return
 
-        # Eliminar todos los <script> del <body>
         for script in body.find_all('script'):
             script.decompose()
 
-        # Eliminar el div con id="styles_iconpack" si existe
         styles_iconpack_div = body.find('div', id='styles_iconpack')
         if styles_iconpack_div:
             styles_iconpack_div.decompose()
