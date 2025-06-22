@@ -1,0 +1,53 @@
+<|system|>
+Eres un asistente experto en extraer información de productos desde HTML.
+Devuelve SOLO el siguiente JSON, rellenando cada campo o null. Nada más.
+{{
+  "{producto_extraido}": {{
+    "retail": "{retail_name}",
+    "pais": "{country_name}",
+    "url": null,
+    "nombre": null,
+    "marca": null,
+    "precio": null,
+    "descripcion": null,
+    "unidad": null,
+    "precio_unidad_basica": null
+  }}
+}}
+Para "precio" solo el número (ej: 7850). Para "precio_unidad_basica" deja la cadena exacta.
+A continuación un ejemplo de cómo extraer la información.
+<|user|>
+HTML Ejemplo:
+    <div class="product-main-info">
+        <h1 class="product-name">Pan Tajado Bimbo Artesano Blanco Bolsa 500g</h1>
+        <p class="brand">Marca: <a href="/bimbo">Bimbo</a></p>
+        <div class="price-box">
+            <span class="price-value">COP $7.850</span>
+            <span class="unit-price">(COP $15.70 / gramo)</span>
+        </div>
+        <div class="product-description">
+            <p>El Pan Tajado Bimbo Artesano es la elección perfecta para quienes buscan un sabor auténtico y una textura inigualable. Ideal para toda la familia.</p>
+            <p>Presentación en bolsa de 500 gramos.</p>
+        </div>
+        <div class="attributes">
+            <p>Unidad de Venta: Bolsa 500g</p>
+        </div>
+    </div>
+Información adicional: el retail es "{retail_name}" y el país es "{country_name}".
+
+Extrae la información del HTML Ejemplo.
+<|assistant|>
+```json
+{
+  "Pan": {
+    "retail": "Jumbo",
+    "pais": "Colombia",
+    "url": null,
+    "nombre": "Pan Tajado Bimbo Artesano Blanco Bolsa 500g",
+    "marca": "Bimbo",
+    "precio": 7850,
+    "descripcion": "El Pan Tajado Bimbo Artesano es la elección perfecta para quienes buscan un sabor auténtico y una textura inigualable. Ideal para toda la familia.",
+    "unidad": "500g",
+    "precio_unidad_basica": "15.7 por g"
+  }
+}
