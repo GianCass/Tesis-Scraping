@@ -46,13 +46,11 @@ def strip_html(raw: str) -> str:
 
 # ─── Carga del modelo QA ───────────────────────────────────────────────────
 def load_qa_model():
-    # En CPU va bien; si dispones de GPU y 4-6 GB usa int8:
-    # quant_cfg = BitsAndBytesConfig(load_in_8bit=True)
+
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
     model     = AutoModelForQuestionAnswering.from_pretrained(
         MODEL_ID,
-        device_map="auto"           # GPU si existe, CPU si no
-        # quantization_config=quant_cfg
+        device_map="auto"          
     )
     return pipeline("question-answering", model=model, tokenizer=tokenizer)
 
@@ -77,7 +75,7 @@ def ask_model(html_fragment: str) -> Optional[str]:
 
     return "\t".join(answers)
 
-# ─── Convierte TSV ➜ dict JSON (añade retail/country) ──────────────────────
+# ─── (añade retail/country) ──────────────────────
 def tsv_to_dict(tsv_line: str, retail: str, country: str) -> Dict[str, Any]:
     precio, nombre, marca, unidad, pub, url = tsv_line.split("\t")
     return {
