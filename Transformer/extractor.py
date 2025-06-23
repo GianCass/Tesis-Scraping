@@ -1,175 +1,147 @@
-from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
-import json
-import re
-import html
-import datetime as dt
+import torch, re, html, json, datetime as dt
 from pathlib import Path
 from typing import Optional, Dict, Any
 from collections import deque
-import torch
+from tqdm import tqdm
+from transformers import (
+    AutoTokenizer, AutoModelForQuestionAnswering,
+    BitsAndBytesConfig, pipeline
+)
+
 torch.set_num_threads(4)
 
-
 # ─── Config ────────────────────────────────────────────────────────────────
-RAW_DIR = Path("data/raw")
+RAW_DIR  = Path("data/raw")
 PROC_DIR = Path("data/processed")
-PROMPT_TXT = Path("prompt_google.txt").read_text().strip()
 
-MODEL_ID = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-# SECONDARY_MODEL_ID =  "ale-bay/zephyr-2b-gemma-sft"
-RETAIL_FALLBK = "Desconocido"
-COUNTRY_FALLB = "Desconocido"
+MODEL_ID = "PlanTL-GOB-ES/roberta-base-bne-sqac"   
+
+QUESTIONS = {
+    "precio":                "¿Cuál es el precio del producto?",
+    "nombre":                "¿Cuál es el nombre del producto?",
+    "marca":                 "¿Cuál es la marca del producto?",
+    "unidad":                "¿En qué unidad se vende el producto?",
+    "precio_unidad_basica":  "¿Cuál es el precio por unidad básica?",
+    "url":                   "¿Cuál es la URL del producto?"
+}
 
 MAX_ATTEMPTS = 5
 NEED_MATCHES = 2
 
-GEN_KWARGS = dict(
-    max_new_tokens=512,
-    do_sample=False,
-    temperature=0.0,
-    # top_p = 0.9
-)
-
-# ─── Helpers ───────────────────────────────────────────────────────────────
-TAG_RE = re.compile(r"<[^>]+>")
+# ─── Helpers de HTML ───────────────────────────────────────────────────────
+TAG_RE    = re.compile(r"<[^>]+>")
 SCRIPT_RE = re.compile(r"<(script|style).*?>.*?</\1>", re.I | re.S)
-WS_RE = re.compile(r"\s+")
-BODY_RE = re.compile(r"<body[^>]*>(.*?)</body>", re.IGNORECASE | re.DOTALL)
+WS_RE     = re.compile(r"\s+")
+BODY_RE   = re.compile(r"<body[^>]*>(.*?)</body>", re.I | re.S)
 
 def extract_body_content(html_string: str) -> Optional[str]:
-    """
-    Extracts the content between the first <body> and </body> tags.
-    Returns None if <body> tags are not found.
-    """
+    """Devuelve el contenido entre <body>…</body> (sin tags)."""
     match = BODY_RE.search(html_string)
-    if match:
-        return match.group(1).strip()
-    return None  # Or you could return the original html_string if no body is found
-
+    return match.group(1).strip() if match else None
 
 def strip_html(raw: str) -> str:
     raw = SCRIPT_RE.sub(" ", raw)
     raw = TAG_RE.sub(" ", raw)
     return WS_RE.sub(" ", html.unescape(raw)).strip()
 
-
-def load_model():
+# ─── Carga del modelo QA ───────────────────────────────────────────────────
+def load_qa_model():
+    # En CPU va bien; si dispones de GPU y 4-6 GB usa int8:
+    # quant_cfg = BitsAndBytesConfig(load_in_8bit=True)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
-
-    model = AutoModelForCausalLM.from_pretrained(
+    model     = AutoModelForQuestionAnswering.from_pretrained(
         MODEL_ID,
-        device_map="auto"  # Accelerate will handle device placement
+        device_map="auto"           # GPU si existe, CPU si no
+        # quantization_config=quant_cfg
     )
+    return pipeline("question-answering", model=model, tokenizer=tokenizer)
 
-    return pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer
-    ), tokenizer
+qa_pipe = load_qa_model()
 
+# ─── Preguntamos al modelo y devolvemos línea TSV ──────────────────────────
+def ask_model(html_fragment: str) -> Optional[str]:
+    context = strip_html(html_fragment)          # texto plano
 
-generator, tokenizer = load_model()
+    answers = []
+    for key, question in QUESTIONS.items():
+        out = qa_pipe(question=question, context=context)
+        ans = out["answer"].strip()
+        if ans == "" or ans.lower() in {"no", "ninguno"}:
+            ans = "NA"
+        answers.append(ans)
 
-
-def ask_model(context: str, retail: str, country: str, nombre_producto: str) -> Optional[Dict[str, Any]]:
-    prompt = PROMPT_TXT.format(
-        html_content=context,
-        retail_name=retail,
-        country_name=country,
-        producto=nombre_producto
-        
-    )
-
-    out = generator(prompt, **GEN_KWARGS)[0]["generated_text"]
-
-    print("\n--- OUTPUT DEL MODELO ---")
-    print(out)
-    print("--- FIN DEL OUTPUT ---\n")
-
-    out = re.sub(r"^```json\s*|```$", "", out, flags=re.I).strip()
-    out = out.replace("None", "null").replace(
-        "True", "true").replace("False", "false")
-    try:
-        return json.loads(out)
-    except json.JSONDecodeError as e:
-        print(f"Error al parsear JSON: {e}")
+    # Aseguramos 6 campos
+    if len(answers) != 6 or any(a == "NA" for a in answers):
+        print("Respuesta incompleta:", answers)
         return None
 
-# ─── Main loop ─────────────────────────────────────────────────────────────
+    return "\t".join(answers)
 
+# ─── Convierte TSV ➜ dict JSON (añade retail/country) ──────────────────────
+def tsv_to_dict(tsv_line: str, retail: str, country: str) -> Dict[str, Any]:
+    precio, nombre, marca, unidad, pub, url = tsv_line.split("\t")
+    return {
+        "precio": precio,
+        "nombre": nombre,
+        "marca": marca,
+        "unidad": unidad,
+        "precio_unidad_basica": pub,
+        "url": url,
+        "retailer": retail,
+        "country": country
+    }
 
-def process_file(html_path: Path, retail: str, country: str):
-
-    raw_html_content = html_path.read_text(
-        errors="ignore")  # 1. Leer el contenido HTML crudo
-    body_content = extract_body_content(raw_html_content) # 2. Extraer el contenido del <body> si existe
-    if body_content:
-        text_for_model = body_content # 2.1 Si hay contenido en <body>, usarlo
-        print("[Info]  Using <body> fragment for model input")
-    else:
-        text_for_model = raw_html_content # 2.2 Si no hay <body>, usar el HTML completo
-        print("[Info]  <body> tag not found, using full HTML")
+# ─── Proceso por archivo ───────────────────────────────────────────────────
+def process_file(html_path: Path, retail: str, country: str) -> Optional[Dict]:
+    raw_html = html_path.read_text(errors="ignore")
+    body     = extract_body_content(raw_html)
+    text_for_model = body if body else raw_html
 
     answers = deque(maxlen=NEED_MATCHES)
 
-    print("\n--- PROMPT INICIO ---")
-    print(text_for_model)
-    print("--- PROMPT FIN ---\n")
-
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        # 3. Pasar el texto plano al modelo
-        result = ask_model(text_for_model, retail, country)
-        if result is None:
-            print(f"Attempt {attempt}: invalid JSON.")
+        tsv_line = ask_model(text_for_model)
+        if not tsv_line:
+            print(f"[{attempt}] TSV inválido.")
             continue
-        answers.append(result)
-        if len(answers) == NEED_MATCHES and len({json.dumps(a, sort_keys=True) for a in answers}) == 1:
-            print(f"Stable answer after {attempt} tries.")
-            return result
-    print(f"No stable answer within {MAX_ATTEMPTS} attempts.")
+
+        result = tsv_to_dict(tsv_line, retail, country)
+        answers.append(json.dumps(result, sort_keys=True))
+
+        if len(answers) == NEED_MATCHES and len(set(answers)) == 1:
+            print(f"✅ Respuesta estable en intento {attempt}")
+            return json.loads(answers[-1])
+
+    print("⛔ No se alcanzó estabilidad")
     return None
 
-
+# ─── Main loop ─────────────────────────────────────────────────────────────
 def main():
     html_files = list(RAW_DIR.rglob("*.html"))
     if not html_files:
         print("No HTML files found.")
         return
 
-    for html_path in tqdm(html_files, desc="Procesando"):
-        country = "Colombia"
-        retail = "Jumbo"
-        nombre_producto = "Pan"
+    all_products = {}
+    retail  = "Jumbo"
+    country = "Colombia"
+    product = "Pan"
 
-        res = process_file(html_path, retail, country, nombre_producto)
-        if res is None:
+    for html_path in tqdm(html_files, desc="Procesando"):
+        res = process_file(html_path, retail, country)
+        if not res:
             continue
 
-        out_dir = PROC_DIR / country / retail
+        key = re.sub(r"[^\w\-]+", "_", res["nombre"].lower())[:100]
+        all_products[key] = res
+
+    if all_products:
+        out_dir = PROC_DIR / product 
         out_dir.mkdir(parents=True, exist_ok=True)
-        ts = dt.datetime.now().strftime("%Y%m%d")
-
-        nombre_para_archivo = "producto_desconocido"
-        if isinstance(res, dict):
-            producto_extraido_data = res.get("producto_extraido")
-            if isinstance(producto_extraido_data, dict):
-                nombre_para_archivo = producto_extraido_data.get(
-                    "nombre", "producto_sin_nombre_detalle")
-            else:
-                # Fallback if "producto_extraido" structure is not as expected
-                nombre_para_archivo = res.get(
-                    "nombre", "producto_estructura_incorrecta")
-        else:
-            nombre_para_archivo = "resultado_no_es_dict"
-
-        nombre_clean = re.sub(
-            r"[^\w\-]+", "_", str(nombre_para_archivo).strip().lower())[:40]
-
-        out_file = out_dir / f"{nombre_clean}_{ts}.json"
-        out_file.write_text(json.dumps(res, ensure_ascii=False, indent=2))
-        print(f"Guardado {out_file}")
-
+        ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_file = out_dir / f"{product}_{ts}.json"
+        out_file.write_text(json.dumps(all_products, ensure_ascii=False, indent=2))
+        print(f"\nGuardado: {out_file}  ({len(all_products)} productos)")
 
 if __name__ == "__main__":
     main()
