@@ -1,6 +1,7 @@
 import scrapy
 from scrapy.http import Request
 import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
@@ -14,6 +15,11 @@ import random
 import time
 
 from selenium.webdriver.common.action_chains import ActionChains
+
+import undetected_chromedriver as uc
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+from captcha import captcha
 
 
 class PageDownloaderSpider(scrapy.Spider):
@@ -173,7 +179,9 @@ class PageDownloaderSpider(scrapy.Spider):
             user_agent = random.choice(self.USER_AGENTS)
             options.add_argument(f'user-agent={user_agent}')
 
-            driver = webdriver.Chrome(options=options)
+            # driver = webdriver.Chrome(options=options)
+            # Driver con Undetected Chromedriver
+            driver = uc.Chrome(headless=True,use_subprocess=False)
 
             driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
                 "source": """
@@ -203,10 +211,13 @@ class PageDownloaderSpider(scrapy.Spider):
             if captcha_tipo == "cloudflare" and ("Verify you are human by completing the action below." or "checking your browser before accessing" or "verify you are human by completing the action below." or "Verify you are human" or "verify you are human" or "verifica que eres humano" or "confirma que eres humano" or "Verificando tu navegador antes de") in page_source:
                 print("⚠️⚠️ Captcha Cloudflare detectado! ⚠️⚠️")
                 # aquí podrías intentar resolver o esperar más
+                captcha.cloudfare(url)
+
 
             elif captcha_tipo == "recaptcha" and ("recaptcha" or "I'm not a robot" or "i'm not a robot" or "No soy un robot" or "no soy un robot") in page_source:
                 print("⚠️⚠️ Captcha reCAPTCHA detectado! ⚠️⚠️")
                 # aquí podrías integrar resolución si es necesario
+                captcha.recaptcha()
 
             try:
                 WebDriverWait(driver, 10).until(
@@ -237,6 +248,9 @@ class PageDownloaderSpider(scrapy.Spider):
 
         except WebDriverException as e:
             self.logger.error(f"Selenium falló al descargar {url}: {e}")
+        finally:
+            if driver:
+                driver.quit()
 
 
     def _guardar_html(self, contenido):
