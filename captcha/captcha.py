@@ -110,7 +110,6 @@ def cloudfare(url):
         raise Exception(f"Error FlareSolverr: {data}")
 
 
-def recaptcha():
-    # Aquí puedes conectar tu propio solver como lo hiciste antes
+def recaptcha(url):
     print("⚠️  Resolver reCAPTCHA manualmente por ahora.")
     return

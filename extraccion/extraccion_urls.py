@@ -1,6 +1,10 @@
 import pandas as pd
 import subprocess
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from captcha import save_cookies
 
 archivo_excel = os.path.join('extraccion', 'dataset', 'edaSisPricingInt.xlsx')
 
@@ -43,6 +47,10 @@ def extraer_urls_excel(archivo_excel, columna_url='URL', columna_tipo='Tipo Pagi
     print(f"URLs estáticas guardadas en: {ruta_estaticas} ({len(df_limpio[df_limpio[columna_tipo] == 'E'])} URLs)")
     print(f"URLs dinámicas guardadas en: {ruta_dinamicas} ({len(df_limpio[df_limpio[columna_tipo] == 'D'])} URLs)")
 
+    #usar una vez al inicio si no hay archivos en cookies de captcha
+    #urls = save_cookies.load_urls_from_txts()
+    #save_cookies.save_cookies_for_multiple_urls(urls)
+
     return len(df_limpio[df_limpio[columna_tipo] == 'E']), len(df_limpio[df_limpio[columna_tipo] == 'D'])
 
 
@@ -53,6 +61,7 @@ def descargar_paginas_scrapy_y_selenium():
         print("Descarga completada con Scrapy!")
     except Exception as e:
         print(f"Error al ejecutar Scrapy: {e}")
+
 
 
 def extraccion_controller():

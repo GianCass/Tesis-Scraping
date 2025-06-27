@@ -17,6 +17,9 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 
 import undetected_chromedriver as uc
+from undetected_chromedriver import Chrome, ChromeOptions
+import pickle
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 from captcha import captcha
@@ -126,8 +129,19 @@ class PageDownloaderSpider(scrapy.Spider):
         captcha_tipo = response.meta.get('captcha_tipo', 'no')
 
         if (
-            (captcha_tipo == "cloudflare" and ("Verify you are human by completing the action below." or "checking your browser before accessing" or "verify you are human by completing the action below." or "Verify you are human" or "verify you are human" or "verifica que eres humano" or "confirma que eres humano" or "Verificando tu navegador antes de") in body_text)
-            or (captcha_tipo == "recaptcha" and ("recaptcha" or "I'm not a robot" or "i'm not a robot" or "No soy un robot" or "no soy un robot") in body_text)
+            (captcha_tipo == "cloudflare" and any(kw in body_text for kw in [
+                "verify you are human by completing the action below.",
+                "checking your browser before accessing",
+                "verify you are human",
+                "verifica que eres humano",
+                "confirma que eres humano",
+                "verificando tu navegador antes de"
+            ]))
+            or (captcha_tipo == "recaptcha" and any(kw in body_text for kw in [
+                "recaptcha",
+                "i'm not a robot",
+                "no soy un robot"
+            ]))
             or "mantén presionado el botón" in body_text
             or "verifica tu identidad" in body_text
         ):
@@ -166,30 +180,64 @@ class PageDownloaderSpider(scrapy.Spider):
 
         self.logger.warning(f"Selenium usándose como fallback para: {url}")
 
+        driver = None
+
         try:
-            options = Options()
-            options.add_argument("--headless")
+            options = uc.ChromeOptions()
             options.add_argument("--disable-gpu")
             options.add_argument("--window-size=1920,1080")
 
             options.add_argument('--disable-blink-features=AutomationControlled')
-            options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            options.add_experimental_option('useAutomationExtension', False)
+
+            # options.add_argument("--headless=new")
+            options.add_argument("--no-first-run")
+            options.add_argument("--no-default-browser-check")
+            options.add_argument("--disable-extensions")
 
             user_agent = random.choice(self.USER_AGENTS)
             options.add_argument(f'user-agent={user_agent}')
 
             # driver = webdriver.Chrome(options=options)
             # Driver con Undetected Chromedriver
-            driver = uc.Chrome(headless=True,use_subprocess=False)
 
-            driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-                "source": """
-                    Object.defineProperty(navigator, 'webdriver', {
-                        get: () => undefined
-                    })
-                """
-            })
+            driver = uc.Chrome(use_subprocess=False, options=options)
+
+            # driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            #     "source": """
+            #         Object.defineProperty(navigator, 'webdriver', {
+            #             get: () => undefined
+            #         })
+            #     """
+            # })
+
+
+            print ("Inicio trabajo con Cookies")
+
+
+            #uiiiauuuiiiiiaaaa
+            parsed_url = urlparse(url)
+            base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+            domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
+            cookies_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'captcha', 'cookies', f"cookies_{domain}.pkl")
+            driver.get(base_url)
+            time.sleep(2)
+
+
+            driver.delete_all_cookies()
+
+            if os.path.exists(cookies_path):
+                print("🔐 Cargando cookies del archivo:", cookies_path)
+                with open(cookies_path, "rb") as f:
+                    cookies = pickle.load(f)
+                    for cookie in cookies:
+                        try:
+                            if 'expiry' in cookie:
+                                cookie['expiry'] = int(cookie['expiry'])
+                            driver.add_cookie(cookie)
+                        except Exception as e:
+                            print(f"❌ Error al agregar cookie: {e}")
+
+
 
             print(f"Cargando con Selenium: {url}")
 
@@ -197,27 +245,38 @@ class PageDownloaderSpider(scrapy.Spider):
 
             time.sleep(random.uniform(2.0, 4.5))
 
-            actions = ActionChains(driver)
-            actions.move_by_offset(random.randint(100, 400), random.randint(100, 400)).perform()
-            time.sleep(random.uniform(0.5, 1.2))
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight * 0.25);")
-            time.sleep(random.uniform(0.8, 1.5))
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight * 0.5);")
-            time.sleep(random.uniform(0.5, 1.2))
-            driver.execute_script("window.scrollTo(0, 0);")
+
+            driver.execute_script("window.scrollBy(0, 150)")
+            time.sleep(random.uniform(0.3, 1.5))
+
+            action = ActionChains(driver)
+            action.move_by_offset(random.randint(10, 200), random.randint(10, 200)).perform()
+            time.sleep(random.uniform(0.5, 1.5))
+
+            time.sleep(60)
 
             page_source = driver.page_source.lower()
 
-            if captcha_tipo == "cloudflare" and ("Verify you are human by completing the action below." or "checking your browser before accessing" or "verify you are human by completing the action below." or "Verify you are human" or "verify you are human" or "verifica que eres humano" or "confirma que eres humano" or "Verificando tu navegador antes de") in page_source:
+            if captcha_tipo == "cloudflare" and any(keyword in page_source for keyword in [
+                "verify you are human by completing the action below.",
+                "checking your browser before accessing",
+                "verify you are human",
+                "verifica que eres humano",
+                "confirma que eres humano",
+                "verificando tu navegador antes de"
+            ]):
                 print("⚠️⚠️ Captcha Cloudflare detectado! ⚠️⚠️")
-                # aquí podrías intentar resolver o esperar más
                 captcha.cloudfare(url)
 
 
-            elif captcha_tipo == "recaptcha" and ("recaptcha" or "I'm not a robot" or "i'm not a robot" or "No soy un robot" or "no soy un robot") in page_source:
+            elif captcha_tipo == "recaptcha" and any(keyword in page_source for keyword in [
+                "recaptcha",
+                "i'm not a robot",
+                "no soy un robot"
+            ]):
                 print("⚠️⚠️ Captcha reCAPTCHA detectado! ⚠️⚠️")
                 # aquí podrías integrar resolución si es necesario
-                captcha.recaptcha()
+                captcha.recaptcha(url)
 
             try:
                 WebDriverWait(driver, 10).until(
@@ -227,18 +286,6 @@ class PageDownloaderSpider(scrapy.Spider):
                 print("Timeout esperando el <body>")
 
             time.sleep(random.uniform(2.0, 4.5))
-
-            # captcha_indicators = [
-            #     "mantén presionado el botón",
-            #     "captcha",
-            #     "verifica tu identidad",
-            #     "verifica",
-            #     "mantén"
-            # ]
-
-            # if any(word in driver.page_source.lower() for word in captcha_indicators):
-            #     print("⚠️ Captcha detectado. Intentando resolver", self.counter, "con Selenium...", url)
-            #     self.captcha_identification(driver, url)
 
 
             page_source = driver.page_source
