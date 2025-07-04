@@ -5,6 +5,8 @@ import sys
 import platform
 import requests
 from time import sleep
+from selenium_recaptcha import Recaptcha_Solver
+from selenium import webdriver
 
 FLARESOLVERR_DIR = os.path.join(os.getcwd(), 'FlareSolverr')
 FLARESOLVERR_URL = "http://localhost:8191"
@@ -22,13 +24,6 @@ def is_flaresolverr_running():
 def install_node_instruction():
     print("\n❌ NodeJS no está instalado. ❌\n")
     system = platform.system().lower()
-    distro = ""
-    if system == "linux":
-        try:
-            with open("/etc/os-release", "r") as f:
-                distro = f.read().lower()
-        except:
-            pass
 
     if system == "darwin":
         print("macOS detectado.")
@@ -111,5 +106,42 @@ def cloudfare(url):
 
 
 def recaptcha(url):
-    print("⚠️  Resolver reCAPTCHA manualmente por ahora.")
-    return
+    print("⚠️ Se detectó un reCAPTCHA, intentando resolverlo automáticamente...")
+
+    options = webdriver.ChromeOptions()
+    # Abrimos sin headless para fallback manual
+    options.add_argument("--window-size=1200,800")
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    # options.add_argument("--headless=new")
+
+    driver = webdriver.Chrome(options=options)
+
+    try:
+        driver.get(url)
+        sleep(10)
+
+        solver = Recaptcha_Solver(
+            driver=driver,
+            ffmpeg_path='',  # descarga automático si no existe
+            log=1  # Mostrar progreso
+        )
+
+        status = solver.solve_recaptcha()
+        # if status and "recaptcha-success" in driver.page_source:
+        if status:
+            print("✅ reCAPTCHA resuelto automáticamente.")
+            sleep(2)
+        else:
+            raise Exception("No se pudo resolver automáticamente")
+
+    except Exception as e:
+        print(f"\n⚠️ No se pudo resolver automáticamente: {e}")
+        print("Esperando que el usuario resuelva el reCAPTCHA manualmente...")
+        print("👉 Una vez resuelto, presiona ENTER para continuar.\n")
+        input()  # Usuario confirma resolucion del Recaptcha
+
+    finally:
+        html = driver.page_source
+        driver.quit()
+        print("🚪 Cerrando navegador tras resolución de reCAPTCHA.")
+        return html
