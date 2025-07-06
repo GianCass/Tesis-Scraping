@@ -1,0 +1,32 @@
+{
+  "arroz_salvaje": {
+    "country": "Colombia",
+    "marca": "Arroz Marca Verde Valle",
+    "nombre": "Arroz Salvaje",
+    "precio": "252246 $38.90",
+    "precio_unidad_basica": "252246 $38.90",
+    "retailer": "Jumbo",
+    "unidad": "252246 $38.90",
+    "url": "252246"
+  },
+  "pan_tajado_santa_clara_artesano": {
+    "country": "Colombia",
+    "marca": "Bimbo",
+    "nombre": "Pan Tajado Santa Clara Artesano",
+    "precio": "500g",
+    "precio_unidad_basica": "500g",
+    "retailer": "Jumbo",
+    "unidad": "Bolsa 500g",
+    "url": "Bolsa 500g"
+  },
+  "pan_tajado_bimbo_artesano": {
+    "country": "Colombia",
+    "marca": "Bimbo COP",
+    "nombre": "Pan Tajado Bimbo Artesano",
+    "precio": "500g",
+    "precio_unidad_basica": "500g",
+    "retailer": "Jumbo",
+    "unidad": "Bolsa 500g",
+    "url": "Bolsa 500g"
+  }
+}

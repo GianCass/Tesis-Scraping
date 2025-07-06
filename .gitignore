@@ -17,4 +17,4 @@ __pycache__/
 *.bak
 
 # Virtual environment
-.venv/
+**/.venv/
