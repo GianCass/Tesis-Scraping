@@ -1,0 +1,20 @@
+{
+  "HTML TEST": {
+    "arroz_verde_valle": {
+      "nombre": "Arroz Verde Valle",
+      "precio": 25.0,
+      "pais": "Mexico",
+      "retail": "Alsuper",
+      "source": "HTML"
+    }
+  },
+  "TXT TEST": {
+    "arroz_verde_valle_txt": {
+      "nombre": "Arroz Verde Valle TXT",
+      "precio": 24.5,
+      "pais": "Brazil",
+      "retail": "TXT_Source",
+      "source": "TXT"
+    }
+  }
+}
