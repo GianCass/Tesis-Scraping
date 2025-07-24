@@ -19,14 +19,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+import subprocess
 
-import undetected_chromedriver as uc
-from undetected_chromedriver import Chrome, ChromeOptions
+
+#import undetected_chromedriver as uc
+#from undetected_chromedriver import Chrome, ChromeOptions
 import pickle
 
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
-from captcha import captcha
+#from captcha import captcha
 
 
 class PageDownloaderSpider(scrapy.Spider):
@@ -132,7 +135,7 @@ class PageDownloaderSpider(scrapy.Spider):
         body_text = response.text.lower()
         captcha_tipo = response.meta.get('captcha_tipo', 'no')
 
-        status_captcha, tipo = self.detectar_captcha(body_text, response.url, captcha_tipo, response.status)
+        status_captcha, tipo = self.detectar_captcha(body_text, response.url, captcha_tipo)
 
         if(status_captcha == True):
             print(f"⚠️⚠️ Captcha detectado ({tipo}) en Scrapy. Usando Selenium como fallback... ⚠️⚠️")
@@ -144,7 +147,7 @@ class PageDownloaderSpider(scrapy.Spider):
 
             return self.fallback_with_selenium(fake_failure)
 
-        self._guardar_html(response.body)
+        self.guardar_html(response.body)
 
 
 
@@ -156,12 +159,20 @@ class PageDownloaderSpider(scrapy.Spider):
         )
 
 
-    def esperar_carga_completa(driver, timeout=45):
+    def esperar_carga_completa(self, driver, timeout=45):
         print("Cargando completamente la página web...\n\n\n")
         try:
-            WebDriverWait(driver, timeout).until(
-                lambda d: d.execute_script('return document.readyState') == 'complete'
-            )
+            # WebDriverWait(driver, timeout).until(
+            #     lambda d: d.execute_script('return document.readyState') == 'complete'
+            # )
+            try:
+                WebDriverWait(driver, timeout).until(
+                    lambda d: d.execute_script('return document.readyState') == 'complete'
+                )
+            except Exception as e:
+                print(f"❌ Timeout esperando document.readyState='complete': {e}")
+                return False
+
             WebDriverWait(driver, timeout).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
             )
@@ -184,8 +195,11 @@ class PageDownloaderSpider(scrapy.Spider):
                 clase = el.get_attribute('class') or ''
                 texto = el.text or ''
                 # tiene que haber por lo menos un elemento que diga precio en su clase o texto para confirmar que la pagina se cargo completamente
-                if 'price' in clase.lower() or 'precio' in clase.lower() or 'preço' in clase.lower() or \
-                'price' in texto.lower() or 'precio' in texto.lower() or 'preço' in texto.lower():
+
+                # if 'price' in clase.lower() or 'precio' in clase.lower() or 'preço' in clase.lower() or \
+                # 'price' in texto.lower() or 'precio' in texto.lower() or 'preço' in texto.lower():
+
+                if 'pr' in clase.lower() or 'pr' in texto.lower() or 'co' in clase.lower() or 'co' in texto.lower() or 'am' in clase.lower():
                     tiene_price = True
                     break
 
@@ -200,76 +214,41 @@ class PageDownloaderSpider(scrapy.Spider):
             return False
 
 
-    def obtener_status_code(driver, target_url):
-        try:
-            logs = driver.get_log("performance")
-            for entry in logs:
-                log = json.loads(entry["message"])["message"]
-                if log["method"] == "Network.responseReceived":
-                    response = log["params"]["response"]
-                    url = response["url"]
-                    if target_url in url:
-                        return response["status"]
-        except Exception as e:
-            print(f"Error al obtener status_code: {e}")
-        return 200
 
 
-
-    def detectar_captcha(page_source, url, captcha_tipo="no", status_code=200):
+    def detectar_captcha(self, page_source, url, captcha_tipo="no"):
         soup = BeautifulSoup(page_source, 'html.parser')
-        visible_text = soup.get_text(separator=' ', strip=True).lower()
+        # visible_text = soup.get_text(separator=' ', strip=True).lower()
 
         print("Detectando captcha para " + url)
 
-        # 1. Cloudflare
-        cloudflare_keywords = [
-            "checking your browser", "checking your browser before accessing", "verificando tu navegador antes de acceder", "verificando tu navegador",
-            "ddos protection", "ddos protection by cloudflare", "cloudflare ray id", "cloudflare security", "checking if the site connection is secure", "browser challenge", "security check", "please enable cookies and reload the page",
-        ]
-
         cloudflare_selectors = [
-            '#challenge-form',
-            '#cf-content',
-            '.challenge-form',
-            '.cf-content'
-            '.cf-browser-verification',
-            '.cf-error-overview',
-            '[data-ray]'
+            "#challenge-form",
+            "#cf-content",
+            ".challenge-form",
+            ".cf-browser-verification",
         ]
 
         # Señales Cloudflare
+        # deteccion por texto - eliminada, por temas de falsos positivos. mismo con el status code
+        # intentando crear una version correcta que funcione hasta si la pagina tiene Shadow-Root (para cloudflare no hay problema, solo recaptcha)
+        # imposible detectar si shadowRoot: closed, continuando normal
         is_cloudflare = (
-            status_code in [503, 403, 429] or
-            any(kw in visible_text for kw in cloudflare_keywords) or
-            any(soup.select(selector) for selector in cloudflare_selectors) or
-            'cloudflare' in visible_text and any(word in visible_text for word in ['challenge', 'verification', 'checking'])
+            any(soup.select(selector) for selector in cloudflare_selectors)
         )
-
 
 
         # 2. reCAPTCHA
         recaptcha_indicators = {
             'selectors': [
                 "div.g-recaptcha",
-                "div.recaptcha",
-                "iframe[src*='google.com/recaptcha']",
-                "script[src*='google.com/recaptcha']",
-                ".g-recaptcha-response",
-                "[data-sitekey]"  # reCAPTCHA site key
+                "div.recaptcha-checkbox",  # checkbox visible en v2
+                ".grecaptcha-badge",  # visible en invisible v3
             ],
-            'text_patterns': [
-                "i'm not a robot",
-                "no soy un robot",
-                "verify you are human",
-                "verifica que eres humano",
-                "recaptcha"
-            ]
         }
 
         is_recaptcha = (
-            any(soup.select(selector) for selector in recaptcha_indicators['selectors']) or
-            any(pattern in visible_text for pattern in recaptcha_indicators['text_patterns'])
+            any(soup.select(selector) for selector in recaptcha_indicators['selectors'])
         )
 
 
@@ -292,28 +271,176 @@ class PageDownloaderSpider(scrapy.Spider):
 
         if captcha_tipo == "cloudflare" and is_cloudflare:
             print("⚠️ Captcha Cloudflare detectado! ⚠️")
-            # captcha.cloudflare(url)
             return True, "cloudflare"
 
         elif captcha_tipo == "recaptcha" and is_recaptcha:
             print("⚠️ Captcha reCAPTCHA detectado! ⚠️")
-            # captcha.recaptcha(url)
             return True, "recaptcha"
 
         elif captcha_tipo == "no":
             if is_cloudflare:
                 print("⚠️⚠️ Captcha Cloudflare detectado automáticamente! ⚠️⚠️")
-                # captcha.cloudflare(url)
                 return True, "cloudflare"
             elif is_recaptcha:
                 print("⚠️⚠️ Captcha reCAPTCHA detectado automáticamente! ⚠️⚠️")
-                # captcha.recaptcha(url)
                 return True, "recaptcha"
 
         return False, "no"
 
 
 
+
+    # Codigo viejo de procesamiento de dinamicas, con Undetected ChromeDriver
+
+
+    # def fallback_with_selenium(self, failure):
+    #     if hasattr(failure, 'request'):
+    #         url = failure.request.url
+    #         captcha_tipo = getattr(failure, 'captcha_tipo', 'no')
+    #     elif hasattr(failure, 'value') and hasattr(failure.value, 'response'):
+    #         url = failure.value.response.url
+    #         captcha_tipo = 'no' #default
+    #     else:
+    #         self.logger.error("Error desconocido en fallback.")
+    #         return
+
+    #     self.logger.warning(f"Selenium (SB) usándose como fallback para: {url}")
+
+    #     # driver = None
+
+    #     try:
+    #         # options = uc.ChromeOptions()
+    #         # options.add_argument("--disable-gpu")
+    #         # options.add_argument("--window-size=1920,1080")
+
+    #         # options.add_argument('--disable-blink-features=AutomationControlled')
+
+    #         # # comment when testing
+    #         # options.add_argument("--headless=new")
+
+    #         # options.add_argument("--no-first-run")
+    #         # options.add_argument("--no-default-browser-check")
+    #         # options.add_argument("--disable-extensions")
+
+    #         # user_agent = random.choice(self.USER_AGENTS)
+    #         # options.add_argument(f'user-agent={user_agent}')
+
+    #         # caps = DesiredCapabilities.CHROME.copy()
+    #         # caps["goog:loggingPrefs"] = {"performance": "ALL"}
+
+    #         # options.add_experimental_option("prefs", {
+    #         #     "profile.managed_default_content_settings.images": 2,
+    #         #     "profile.managed_default_content_settings.stylesheets": 2,
+    #         #     "profile.managed_default_content_settings.fonts": 2,
+    #         #     "profile.managed_default_content_settings.plugins": 2
+    #         # })
+
+    #         # # Driver con Undetected Chromedriver
+    #         # driver = uc.Chrome(use_subprocess=False, options=options)
+
+
+
+    #         # print ("Inicio trabajo con Cookies")
+
+    #         # with SB (headless = False, block_images = True) as sb:
+    #         #     parsed_url = urlparse(url)
+    #         #     base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+    #         #     domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
+    #         #     cookies_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'captcha', 'cookies', f"cookies_{domain}.pkl")
+    #         #     sb.open(base_url)
+    #         #     time.sleep(2)
+    #         #     sb.driver.delete_all_cookies()
+
+    #         #     if os.path.exists(cookies_path):
+    #         #         print("🔐 Cargando cookies del archivo:", cookies_path)
+    #         #         with open(cookies_path, "rb") as f:
+    #         #             cookies = pickle.load(f)
+    #         #             for cookie in cookies:
+    #         #                 try:
+    #         #                     if 'expiry' in cookie:
+    #         #                         cookie['expiry'] = int(cookie['expiry'])
+    #         #                     driver.add_cookie(cookie)
+    #         #                 except Exception as e:
+    #         #                     print(f"❌ Error al agregar cookie: {e}")
+
+
+
+    #         print(f"Cargando con Selenium: {url}")
+
+
+    #         with SB(uc=True, headless=False, locale="en") as sb:
+    #             sb.activate_cdp_mode(url)
+    #             sb.uc_gui_click_captcha()
+    #             sb.sleep(5)
+    #             # sb.get(url)
+
+    #             # # carga completa de la pagina
+    #             # status = False
+    #             # for intento in range(3):
+    #             #     status = self.esperar_carga_completa(sb.driver)
+    #             #     if status:
+    #             #         break
+    #             #     print(f"Intento {intento + 1} fallido. Reintentando en 10 segundos...")
+    #             #     time.sleep(60)
+
+    #             # if not status:
+    #             #     print("La página no se cargó completamente después de 3 intentos.")
+
+
+
+    #             sb.driver.execute_script("window.scrollBy(0, 150)")
+    #             sb.sleep(2)
+
+    #             # action = ActionChains(driver)
+    #             # action.move_by_offset(random.randint(10, 200), random.randint(10, 200)).perform()
+    #             # time.sleep(random.uniform(0.5, 1.5))
+
+    #             # time.sleep(10)
+
+
+    #             page_source = sb.driver.page_source.lower()
+
+    #         # obtener el status code para detectar cloudflare
+    #             status_code = self.obtener_status_code(sb.driver, url)
+
+    #         # verificar si hay captcha y llamar funciones para solucionarlas
+    #             status_captcha, captcha_tipo_detected = self.detectar_captcha(page_source, url, captcha_tipo, status_code)
+    #             print("\nEl estado de captcha para " + url + "es: " + str(status_captcha))
+    #             if(status_captcha):
+    #                 if (captcha_tipo_detected == "cloudfare"):
+    #                     resolved_html = captcha.cloudflare(url)
+    #                 elif (captcha_tipo_detected == "recaptcha"):
+    #                     resolved_html = captcha.recaptcha(url)
+    #                 self.guardar_html(resolved_html.encode("utf-8"))
+    #                 # driver.quit()
+    #                 return
+
+
+
+    #         # carga completa de la pagina
+    #         # status = False
+    #         # for intento in range(3):
+    #         #     status = self.esperar_carga_completa(driver)
+    #         #     if status:
+    #         #         break
+    #         #     print(f"Intento {intento + 1} fallido. Reintentando en 10 segundos...")
+    #         #     time.sleep(10)
+
+    #         # if not status:
+    #         #     print("La página no se cargó completamente después de 3 intentos.")
+
+    #         # time.sleep(random.uniform(2.0, 4.5))
+
+    #             page_source = sb.driver.page_source.lower()
+    #         # driver.quit()
+
+    #             self.guardar_html(page_source.encode('utf-8'))
+
+    #     except WebDriverException as e:
+    #         self.logger.error(f"Selenium falló al descargar {url}: {e}")
+    #     # finally:
+    #     #     if sb.driver:
+    #     #         driver.quit()
 
 
 
@@ -324,148 +451,21 @@ class PageDownloaderSpider(scrapy.Spider):
             captcha_tipo = getattr(failure, 'captcha_tipo', 'no')
         elif hasattr(failure, 'value') and hasattr(failure.value, 'response'):
             url = failure.value.response.url
-            captcha_tipo = 'no' #default
+            captcha_tipo = 'no'
         else:
             self.logger.error("Error desconocido en fallback.")
             return
 
-        self.logger.warning(f"Selenium usándose como fallback para: {url}")
+        self.logger.warning(f"Selenium (SeleniumBase) usándose como fallback para: {url}")
 
-        driver = None
-
-        try:
-            options = uc.ChromeOptions()
-            options.add_argument("--disable-gpu")
-            options.add_argument("--window-size=1920,1080")
-
-            options.add_argument('--disable-blink-features=AutomationControlled')
-
-            # options.add_argument("--headless=new")
-            options.add_argument("--no-first-run")
-            options.add_argument("--no-default-browser-check")
-            options.add_argument("--disable-extensions")
-
-            user_agent = random.choice(self.USER_AGENTS)
-            options.add_argument(f'user-agent={user_agent}')
-
-            caps = DesiredCapabilities.CHROME.copy()
-            caps["goog:loggingPrefs"] = {"performance": "ALL"}
-
-            options.add_experimental_option("prefs", {
-                "profile.managed_default_content_settings.images": 2,
-                "profile.managed_default_content_settings.stylesheets": 2,
-                "profile.managed_default_content_settings.fonts": 2,
-                "profile.managed_default_content_settings.plugins": 2
-            })
-
-            # Driver con Undetected Chromedriver
-            driver = uc.Chrome(use_subprocess=False, options=options)
-
-
-
-            print ("Inicio trabajo con Cookies")
-
-
-            #uiiiauuuiiiiiaaaa
-            parsed_url = urlparse(url)
-            base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
-            domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
-            cookies_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'captcha', 'cookies', f"cookies_{domain}.pkl")
-            driver.get(base_url)
-            time.sleep(2)
-
-
-            driver.delete_all_cookies()
-
-            if os.path.exists(cookies_path):
-                print("🔐 Cargando cookies del archivo:", cookies_path)
-                with open(cookies_path, "rb") as f:
-                    cookies = pickle.load(f)
-                    for cookie in cookies:
-                        try:
-                            if 'expiry' in cookie:
-                                cookie['expiry'] = int(cookie['expiry'])
-                            driver.add_cookie(cookie)
-                        except Exception as e:
-                            print(f"❌ Error al agregar cookie: {e}")
-
-
-
-            print(f"Cargando con Selenium: {url}")
-
-
-
-            driver.get(url)
-
-            # carga completa de la pagina
-            status = False
-            for intento in range(3):
-                status = self.esperar_carga_completa(driver)
-                if status:
-                    break
-                print(f"Intento {intento + 1} fallido. Reintentando en 10 segundos...")
-                time.sleep(10)
-
-            if not status:
-                print("La página no se cargó completamente después de 3 intentos.")
-
-
-            time.sleep(random.uniform(2.0, 4.5))
-
-
-            driver.execute_script("window.scrollBy(0, 150)")
-            time.sleep(random.uniform(0.3, 1.5))
-
-            action = ActionChains(driver)
-            action.move_by_offset(random.randint(10, 200), random.randint(10, 200)).perform()
-            time.sleep(random.uniform(0.5, 1.5))
-
-            time.sleep(10)
-
-
-            page_source = driver.page_source.lower()
-
-            # obtener el status code para detectar cloudflare
-            status_code = self.obtener_status_code(driver, url)
-
-            # verificar si hay captcha y llamar funciones para solucionarlas
-            status_captcha, captcha_tipo_detected = self.detectar_captcha(page_source, url, captcha_tipo, status_code)
-            print("\nEl estado de captcha para " + url + "es: " + status_captcha)
-            if(status_captcha):
-                if (captcha_tipo_detected == "cloudfare"):
-                    resolved_html = captcha.cloudflare(url)
-                elif (captcha_tipo_detected == "recaptcha"):
-                    resolved_html = captcha.recaptcha(url)
-                self.guardar_html(resolved_html.encode("utf-8"))
-                driver.quit()
-                return
-
-
-
-            # carga completa de la pagina
-            # status = False
-            # for intento in range(3):
-            #     status = self.esperar_carga_completa(driver)
-            #     if status:
-            #         break
-            #     print(f"Intento {intento + 1} fallido. Reintentando en 10 segundos...")
-            #     time.sleep(10)
-
-            # if not status:
-            #     print("La página no se cargó completamente después de 3 intentos.")
-
-            # time.sleep(random.uniform(2.0, 4.5))
-
-            page_source = driver.page_source
-            driver.quit()
-
-            self.guardar_html(page_source.encode('utf-8'))
-
-        except WebDriverException as e:
-            self.logger.error(f"Selenium falló al descargar {url}: {e}")
-        finally:
-            if driver:
-                driver.quit()
+        subprocess.run([
+            "python3", "web_scraper_spi/spiders/selenium_tools/selenium_fallback_runner.py",
+            url,
+            captcha_tipo,
+            str(self.counter),  # contador para nombrar el archivo
+            self.project_dir #directorio desde page_downloader.py
+        ])
+        self.counter += 1
 
 
     def guardar_html(self, contenido):
@@ -479,6 +479,9 @@ class PageDownloaderSpider(scrapy.Spider):
         # Aqui se hace parte de la limpieza de bodies
         for script in body.find_all('script'):
             script.decompose()
+
+        for template in body.find_all('template'):
+            template.decompose()
 
         for style in body.find_all('style'):
             style.decompose()

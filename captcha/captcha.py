@@ -7,6 +7,7 @@ import requests
 from time import sleep
 from selenium_recaptcha import Recaptcha_Solver
 from selenium import webdriver
+from seleniumbase import SB
 
 FLARESOLVERR_DIR = os.path.join(os.getcwd(), 'FlareSolverr')
 FLARESOLVERR_URL = "http://localhost:8191"
@@ -102,7 +103,21 @@ def cloudfare(url):
     if data.get("status") == "ok":
         return data["solution"]["response"]
     else:
-        raise Exception(f"Error FlareSolverr: {data}")
+        return resolve_cloudflare_with_seleniumbase(url)
+
+
+def resolve_cloudflare_with_seleniumbase(url):
+    print("Inicializando resolucion de Cloudflare con SeleniumBase")
+    try:
+        with SB(uc=True, headless=False, locale="en") as sb:
+            sb.activate_cdp_mode(url)
+            sb.uc_gui_click_captcha()
+            sb.sleep(5)
+            page_source = sb.driver.page_source
+            return page_source
+
+    except Exception as e:
+        print(f"❌ Error cargando {url}: {e}")
 
 
 def recaptcha(url):
@@ -112,13 +127,12 @@ def recaptcha(url):
     # Abrimos sin headless para fallback manual
     options.add_argument("--window-size=1200,800")
     options.add_argument('--disable-blink-features=AutomationControlled')
-    # options.add_argument("--headless=new")
 
     driver = webdriver.Chrome(options=options)
 
     try:
         driver.get(url)
-        sleep(10)
+        sleep(40)
 
         solver = Recaptcha_Solver(
             driver=driver,
@@ -139,6 +153,7 @@ def recaptcha(url):
         print("Esperando que el usuario resuelva el reCAPTCHA manualmente...")
         print("👉 Una vez resuelto, presiona ENTER para continuar.\n")
         input()  # Usuario confirma resolucion del Recaptcha
+        sleep(20)
 
     finally:
         html = driver.page_source

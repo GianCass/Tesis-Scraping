@@ -2,6 +2,7 @@ import os
 import pickle
 from urllib.parse import urlparse
 import undetected_chromedriver as uc
+from seleniumbase import SB
 
 def save_cookies_for_multiple_urls(urls_with_captcha):
     cookies_dir = os.path.join(os.path.dirname(__file__), "cookies")
@@ -23,22 +24,23 @@ def save_cookies_for_multiple_urls(urls_with_captcha):
         print(f"\n Abriendo Dominio Unico: {url} \n")
 
         try:
-            driver = uc.Chrome(headless=False, use_subprocess=False)
-            driver.get(f"{parsed.scheme}://{domain}")
+            # driver = uc.Chrome(headless=False, use_subprocess=False)
+            with SB(uc=True, headless=False, locale="en") as sb:
+                sb.open(f"{parsed.scheme}://{domain}")
 
-            input(f"⚠️  Resuelve manualmente el CAPTCHA en {domain} de tipo {captcha_tipo} (si hay uno) y presiona Enter...")
+                input(f"⚠️  Resuelve manualmente el CAPTCHA en {domain} de tipo {captcha_tipo} (si hay uno) y presiona Enter...")
 
-            cookies = driver.get_cookies()
-            with open(filename, "wb") as f:
-                pickle.dump(cookies, f)
+                cookies = sb.driver.get_cookies()
+                with open(filename, "wb") as f:
+                    pickle.dump(cookies, f)
 
-            print(f"✅ Cookies guardadas para {domain} en: {filename}")
-            driver.quit()
+                print(f"✅ Cookies guardadas para {domain} en: {filename}")
+            # driver.quit()
 
         except Exception as e:
             print(f"❌ Error cargando {domain}: {e}")
-            if driver:
-                driver.quit()
+            # if driver:
+            #     driver.quit()
 
 
 
