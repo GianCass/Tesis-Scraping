@@ -21,13 +21,16 @@ selectors = {
     "www.cotodigital.com.ar": ["var.price.h3.ng-star-inserted"],
     "domicilios.tiendasd1.com": ["p.base__price"],
     "www.jumbo.cl": ["div.sticky-product-prices"],
-    "www.lider.cl": ["span.pdp-mobile-sales-price"],
     "www.alvi.cl": ["body:contains('Sku:')"],  # texto especial
     "www.wong.pe": ["span.vtex-product-price-1-x-currencyContainer"],
+    "www.obahortifruti.com.br": ["section.section-breadcrumb"], # EN VEZ DE SUPERMUFFATO
+    "www.extramercado.com.br": ["body:contains('Preço')"], # EN VEZ DE BRETA - texto especial
+    "www.realonline.com.py": ["p.base__price"], # EN VEZ DE SALEMMAONLINE
+    "www.hiperlibertad.com.ar": ["span.vtex-product-price-1-x-sellingPriceValue"],
     "www.vivanda.com.pe": ["span.vivanda-product-price-1-x-currencyContainer"],
     "www.peridomicilio.com": ["div.cart__actions__price"],
     "www.megasuper.com": ["div.cart__actions__price"],
-    "automercado.cr": ["h1.medium-text"],
+    "automercado.cr": ["h1.product-detail__data--title"],
     "www.smrey.com": ["div.cart__actions__price"],
     "www.pricesmart.com": ["span.sf-price__regular"],
     "biggie.com.py": ["p.priceArticle"],
@@ -39,7 +42,7 @@ selectors = {
     "www.jumbo.com.ar": ["div.vtex-price-format-gallery"],
     "diaonline.supermercadosdia.com.ar": ["span.diaio-store-5-x-sellingPriceValue"],
     "www.exito.com": ["body:contains('Otros')"],  # texto
-    "www.jumbocolombia.com": ["div.vtex-flex-layout-0-x-flexRowContent--discounts-prices"],
+    "www.jumbocolombia.com": ["div.tiendasjumboqaio-jumbo-minicart-2-x-price"],
     "www.olimpica.com": ["span.olimpica-dinamic-flags-0-x-currencyContainer"],
     "www.carulla.com": ["body:contains('Und')"],  # texto especial
     "www.unimarc.cl": ["body:contains('Sku:')"],
@@ -59,6 +62,9 @@ selectors = {
     "www.casarica.com.py": ["span#producto-precio"],
     "www.stock.com.py": ["span.productPrice"],
     "www.superseis.com.py": ["span.productPrice"],
+    "www.maxipali.co.cr": ["span.vtex-store-components-3-x-currencyContainer"], # PERSONALIZAR - DONE
+    "despensa.bodegaaurrera.com.mx": ["h1#main-title"], # PERSONALIZAR - DONE
+    "www.lider.cl": ["span.pdp-mobile-sales-price"],
 }
 
 
@@ -120,6 +126,11 @@ with SB(uc=True) as sb:
 
     dominio = urlparse(url).netloc
     price_selectors = selectors.get(dominio, [])
+
+    if (dominio == "www.maxipali.co.cr"):
+         print("Contenido visible detras el banner, si es que aparecio")
+    elif (dominio == "despensa.bodegaaurrera.com.mx"):
+         print("Contenido visible detras el banner, si es que aparecio")
 
 
     # Espera por precio dinámico => Pagina cargada completamente - DONE
