@@ -458,8 +458,13 @@ class PageDownloaderSpider(scrapy.Spider):
 
         self.logger.warning(f"Selenium (SeleniumBase) usándose como fallback para: {url}")
 
+        if sys.platform.startswith("win"):
+            python_cmd = "python"
+        else:
+            python_cmd = "python3"
+
         subprocess.run([
-            "python3", "web_scraper_spi/spiders/selenium_tools/selenium_fallback_runner.py",
+            python_cmd, "web_scraper_spi/spiders/selenium_tools/selenium_fallback_runner.py",
             url,
             captcha_tipo,
             str(self.counter),  # contador para nombrar el archivo
