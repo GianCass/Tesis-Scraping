@@ -10,12 +10,3 @@ if __name__ == "__main__":
 
 
 
-# id - numero html
-# raw
-# clean
-# fecha
-# PB -> extraccion por llm
-
-# extraccion llm almacena: mongo PB y postgresql
-
-# postregsql??
