@@ -1,0 +1,27 @@
+[2025-08-02T02:17:00.411+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-02T02:09:24.471156+00:00 [queued]>
+[2025-08-02T02:17:00.559+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-02T02:09:24.471156+00:00 [queued]>
+[2025-08-02T02:17:00.563+0000] {taskinstance.py:2193} INFO - Starting attempt 4 of 9
+[2025-08-02T02:17:00.652+0000] {taskinstance.py:2214} INFO - Executing <Task(BashOperator): run_scraping_script> on 2025-08-02 02:09:24.471156+00:00
+[2025-08-02T02:17:00.713+0000] {standard_task_runner.py:60} INFO - Started process 522 to run task
+[2025-08-02T02:17:00.728+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'scraping_main_run', 'run_scraping_script', 'manual__2025-08-02T02:09:24.471156+00:00', '--job-id', '12', '--raw', '--subdir', 'DAGS_FOLDER/scraping_dags.py', '--cfg-path', '/tmp/tmpyodn3o_s']
+[2025-08-02T02:17:00.752+0000] {standard_task_runner.py:88} INFO - Job 12: Subtask run_scraping_script
+[2025-08-02T02:17:01.055+0000] {task_command.py:423} INFO - Running <TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-02T02:09:24.471156+00:00 [running]> on host d33756a07e2f
+[2025-08-02T02:17:02.078+0000] {taskinstance.py:2510} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='scraping_main_run' AIRFLOW_CTX_TASK_ID='run_scraping_script' AIRFLOW_CTX_EXECUTION_DATE='2025-08-02T02:09:24.471156+00:00' AIRFLOW_CTX_TRY_NUMBER='4' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-08-02T02:09:24.471156+00:00'
+[2025-08-02T02:17:02.163+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-08-02T02:17:02.170+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/spiView/Tesis-Scraping && python3 extraccion/main.py']
+[2025-08-02T02:17:02.255+0000] {subprocess.py:86} INFO - Output:
+[2025-08-02T02:17:02.363+0000] {subprocess.py:93} INFO - /usr/bin/bash: line 1: cd: /opt/spiView/Tesis-Scraping: No such file or directory
+[2025-08-02T02:17:02.369+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-08-02T02:17:02.461+0000] {taskinstance.py:2728} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 444, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 414, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 212, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-08-02T02:17:02.476+0000] {taskinstance.py:1149} INFO - Marking task as UP_FOR_RETRY. dag_id=scraping_main_run, task_id=run_scraping_script, execution_date=20250802T020924, start_date=20250802T021700, end_date=20250802T021702
+[2025-08-02T02:17:02.572+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 12 for task run_scraping_script (Bash command failed. The command returned a non-zero exit code 1.; 522)
+[2025-08-02T02:17:02.620+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-08-02T02:17:02.698+0000] {taskinstance.py:3309} INFO - 0 downstream tasks scheduled from follow-on schedule check

@@ -1,0 +1,34 @@
+[2025-08-14T17:43:28.560+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-14T17:38:24.569801+00:00 [queued]>
+[2025-08-14T17:43:28.564+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-14T17:38:24.569801+00:00 [queued]>
+[2025-08-14T17:43:28.564+0000] {taskinstance.py:2193} INFO - Starting attempt 2 of 2
+[2025-08-14T17:43:28.569+0000] {taskinstance.py:2214} INFO - Executing <Task(BashOperator): run_scraping_script> on 2025-08-14 17:38:24.569801+00:00
+[2025-08-14T17:43:28.574+0000] {standard_task_runner.py:60} INFO - Started process 251 to run task
+[2025-08-14T17:43:28.578+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'scraping_main_run', 'run_scraping_script', 'manual__2025-08-14T17:38:24.569801+00:00', '--job-id', '48', '--raw', '--subdir', 'DAGS_FOLDER/scraping_dags.py', '--cfg-path', '/tmp/tmptxdtxkiu']
+[2025-08-14T17:43:28.580+0000] {standard_task_runner.py:88} INFO - Job 48: Subtask run_scraping_script
+[2025-08-14T17:43:28.603+0000] {task_command.py:423} INFO - Running <TaskInstance: scraping_main_run.run_scraping_script manual__2025-08-14T17:38:24.569801+00:00 [running]> on host 6a055ba4d49c
+[2025-08-14T17:43:28.635+0000] {taskinstance.py:2510} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='scraping_main_run' AIRFLOW_CTX_TASK_ID='run_scraping_script' AIRFLOW_CTX_EXECUTION_DATE='2025-08-14T17:38:24.569801+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-08-14T17:38:24.569801+00:00'
+[2025-08-14T17:43:28.636+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-08-14T17:43:28.637+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'cd /opt/***/tesis-scraping && source venv/bin/activate && python3 extraccion/main.py']
+[2025-08-14T17:43:28.643+0000] {subprocess.py:86} INFO - Output:
+[2025-08-14T17:43:28.922+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2025-08-14T17:43:28.922+0000] {subprocess.py:93} INFO -   File "extraccion/main.py", line 1, in <module>
+[2025-08-14T17:43:28.922+0000] {subprocess.py:93} INFO -     import extraccion_urls as extract
+[2025-08-14T17:43:28.922+0000] {subprocess.py:93} INFO -   File "/opt/***/tesis-scraping/extraccion/extraccion_urls.py", line 7, in <module>
+[2025-08-14T17:43:28.922+0000] {subprocess.py:93} INFO -     from captcha import save_cookies
+[2025-08-14T17:43:28.923+0000] {subprocess.py:93} INFO -   File "/opt/***/tesis-scraping/captcha/save_cookies.py", line 4, in <module>
+[2025-08-14T17:43:28.923+0000] {subprocess.py:93} INFO -     import undetected_chromedriver as uc
+[2025-08-14T17:43:28.923+0000] {subprocess.py:93} INFO - ModuleNotFoundError: No module named 'undetected_chromedriver'
+[2025-08-14T17:43:28.954+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-08-14T17:43:28.962+0000] {taskinstance.py:2728} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 444, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 414, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 212, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-08-14T17:43:28.964+0000] {taskinstance.py:1149} INFO - Marking task as FAILED. dag_id=scraping_main_run, task_id=run_scraping_script, execution_date=20250814T173824, start_date=20250814T174328, end_date=20250814T174328
+[2025-08-14T17:43:28.971+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 48 for task run_scraping_script (Bash command failed. The command returned a non-zero exit code 1.; 251)
+[2025-08-14T17:43:29.019+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-08-14T17:43:29.038+0000] {taskinstance.py:3309} INFO - 0 downstream tasks scheduled from follow-on schedule check
