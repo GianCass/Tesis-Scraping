@@ -481,7 +481,9 @@ class PageDownloaderSpider(scrapy.Spider):
             self.logger.warning("No se encontró <body> en el HTML.")
             return
 
-        # Aqui se hace parte de la limpieza de bodies
+        for header in body.find_all(['header', 'footer', 'nav']):
+            header.decompose()
+
         for script in body.find_all('script'):
             script.decompose()
 
@@ -494,9 +496,12 @@ class PageDownloaderSpider(scrapy.Spider):
         for iframe in body.find_all('iframe'):
             iframe.decompose()
 
+
         styles_iconpack_div = body.find('div', id='styles_iconpack')
         if styles_iconpack_div:
             styles_iconpack_div.decompose()
+
+        body = soup.body
 
         output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
         os.makedirs(output_dir, exist_ok=True)
