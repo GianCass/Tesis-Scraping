@@ -39,13 +39,13 @@ def install_node_instruction():
 
     sys.exit(1)
 
-def install_requirements():
-    print("📦 Instalando dependencias de FlareSolverr...")
-    subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"],
-        cwd=FLARESOLVERR_DIR,
-        check=True
-    )
+# def install_requirements():
+#     print("📦 Instalando dependencias de FlareSolverr...")
+#     subprocess.run(
+#         [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"],
+#         cwd=FLARESOLVERR_DIR,
+#         check=True
+#     )
 
 def start_flaresolverr():
     if not is_node_installed():
@@ -125,6 +125,7 @@ def recaptcha(url):
 
     options = webdriver.ChromeOptions()
     # Abrimos sin headless para fallback manual
+    options.add_argument("--headless")
     options.add_argument("--window-size=1200,800")
     options.add_argument('--disable-blink-features=AutomationControlled')
 
@@ -152,7 +153,7 @@ def recaptcha(url):
         print(f"\n⚠️ No se pudo resolver automáticamente: {e}")
         print("Esperando que el usuario resuelva el reCAPTCHA manualmente...")
         print("👉 Una vez resuelto, presiona ENTER para continuar.\n")
-        input()  # Usuario confirma resolucion del Recaptcha
+        # input()  # Usuario confirma resolucion del Recaptcha
         sleep(20)
 
     finally:

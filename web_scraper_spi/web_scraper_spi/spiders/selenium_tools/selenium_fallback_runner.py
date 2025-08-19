@@ -202,7 +202,12 @@ with SB(uc=True) as sb:
                 print("UC_GUI_CLICK_CAPTCHA de SB no pudo pasar el captcha Cloudflare. Intentando con Captcha Solver\n")
                 resolved_html = captcha.cloudflare(url)
         elif (tipo_captcha_detectado == "recaptcha"):
-            resolved_html = captcha.recaptcha(url)
+            try:
+                sb.uc_gui_click_captcha()
+                resolved_html = sb.cdp.get_page_source()
+            except Exception as e:
+                print("UC_GUI_CLICK_CAPTCHA de SB no pudo pasar el captcha reCAPTCHA. Intentando con Captcha Solver\n")
+                resolved_html = captcha.recaptcha(url)
         guardar_html(resolved_html)
     else:
         guardar_html(page_source.lower())

@@ -1,0 +1,38 @@
+version: "3.8"
+# Correr este comando mas abajo (si Airflow Dockerizado)
+# docker network create airflow_net
+networks:
+  airflow_net:
+    external: true   # compartimos red con Airflow (créala si no existe)
+
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=info
+      - TZ=UTC
+    ports:
+      - "8191:8191"   # opcional si quieres acceder desde host
+    networks:
+      - airflow_net
+
+  scraper:
+    image: spi_scraper:latest
+    container_name: spi_scraper
+    # No arranca solo: lo lanza Airflow con DockerOperator
+    # Correr este comando mas abajo (si Airflow Dockerizado)
+    # docker network create airflow_net
+    networks:
+      - airflow_net
+    environment:
+      - FLARESOLVERR_URL=http://flaresolverr:8191
+      # agrega otras variables necesarias (Mongo, etc.)
+      - MONGO_URI=mongodb://host.docker.internal:27017/bodies_scraping
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data:/app/data         # resultados/logs persistentes
+      - ./dataset:/app/dataset   # si lees txt desde aquí
+    entrypoint: ["with-xvfb"]    # Airflow pasará el comando

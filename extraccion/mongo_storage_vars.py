@@ -7,8 +7,10 @@ import glob
 carpeta_txt = "extraccion/dataset/paginas_descargadas_vars/"
 
 # Conexión a MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['bodies_scraping']
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/bodies_scraping")
+client = MongoClient(MONGO_URI)
+db_name = MONGO_URI.rsplit('/', 1)[-1] or "bodies_scraping"
+db = client[db_name]
 collection = db['vars']
 
 # Vaciar colección antes de insertar

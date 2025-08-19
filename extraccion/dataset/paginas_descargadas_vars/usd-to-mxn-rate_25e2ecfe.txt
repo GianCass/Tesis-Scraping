@@ -2,7 +2,7 @@ saltar al contenido principal
 1 dólar estadounidense a pesos mexicanos
 convierte usd a mxn al tipo de cambio medio del mercado. wise es la cuenta internacional para enviar, gastar y convertir dinero como un local.
 tipo de cambio medio del mercado
-$1 usd = 18,77 mxn
+$1 usd = 18,80 mxn
 cantidad
 usd
 convertido a
@@ -28,11 +28,12 @@ sigue los tipos de cambio en tiempo real
 guarda tus divisas favoritas para comprobar cómo varía el tipo de cambio con el tiempo.
 completamente gratis, sin anuncios
 descarga en segundos. es completamente gratis y no hay anuncios molestos.
+descarga el conversor de divisas de wise
 gráfico de usd a mxn
 nuestro gráfico interactivo de usd a mxn utiliza los tipos de cambio medio del mercado en tiempo real y te permite ver los datos históricos de los últimos 5 años. ¿esperas un tipo de cambio mejor? configura una alerta ahora y te avisaremos cuando mejore. y con nuestros resúmenes diarios, nunca te perderás las últimas noticias.
 haz un seguimiento del tipo de cambio
-0
-no change
+1 usd = 18,8010 mxn
+up by 0.05%
 periodo de tiempo
 48 h
 7 d
@@ -52,44 +53,44 @@ mínimo
 18,5181
 18,5181
 media
-18,6956
-18,8876
+18,6961
+18,8819
 fluctuación
-0.16%
--2.59%
+0.44%
+-2.93%
 ver historial completo
 estadísticas de 1 usd a mxn
-el rendimiento de usd frente a mxn en los últimos 30 días ha experimentado un máximo de 30 días de 18,8885 y un mínimo de 30 días de 18,5181. esto significa que la media de 30 días fue de 18,6956. la fluctuación de usd frente a mxn fue de 0.16.
-el rendimiento de usd frente a mxn en los últimos 90 días experimentó un máximo de 90 días de 19,4338 y un mínimo de 90 días de 18,5181. esto significa que la media de 90 días fue de 18,8876. la fluctuación de usd frente a mxn fue de -2.59.
+el rendimiento de usd frente a mxn en los últimos 30 días ha experimentado un máximo de 30 días de 18,8885 y un mínimo de 30 días de 18,5181. esto significa que la media de 30 días fue de 18,6961. la fluctuación de usd frente a mxn fue de 0.44.
+el rendimiento de usd frente a mxn en los últimos 90 días experimentó un máximo de 90 días de 19,4338 y un mínimo de 90 días de 18,5181. esto significa que la media de 90 días fue de 18,8819. la fluctuación de usd frente a mxn fue de -2.93.
 seguir tasas del mercado
 consulta el gráfico de usd a mxn
 tipos de cambio de usd a mxn hoy
 usd
 mxn
 1 usd
-18,77 mxn
+18,80 mxn
 5 usd
-93,85 mxn
+94,01 mxn
 10 usd
-187,71 mxn
+188,01 mxn
 20 usd
-375,42 mxn
+376,02 mxn
 50 usd
-938,54 mxn
+940,05 mxn
 100 usd
-1877,08 mxn
+1880,10 mxn
 250 usd
-4692,70 mxn
+4700,25 mxn
 500 usd
-9385,40 mxn
+9400,50 mxn
 1000 usd
-18.770,80 mxn
+18.801 mxn
 2000 usd
-37.541,60 mxn
+37.602 mxn
 5000 usd
-93.854 mxn
+94.005,00 mxn
 10000 usd
-187.708 mxn
+188.010,00 mxn
 mxn
 usd
 1 mxn
@@ -99,23 +100,23 @@ usd
 10 mxn
 0,53 usd
 20 mxn
-1,07 usd
+1,06 usd
 50 mxn
 2,66 usd
 100 mxn
-5,33 usd
+5,32 usd
 250 mxn
-13,32 usd
+13,30 usd
 500 mxn
-26,64 usd
+26,59 usd
 1000 mxn
-53,27 usd
+53,19 usd
 2000 mxn
-106,55 usd
+106,38 usd
 5000 mxn
-266,37 usd
+265,94 usd
 10000 mxn
-532,74 usd
+531,89 usd
 preguntas frecuentes
 ¿cómo convierto divisas?
 ¿por qué las comisiones por conversión de moneda difieren entre empresas?

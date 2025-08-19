@@ -463,13 +463,17 @@ class PageDownloaderSpider(scrapy.Spider):
         else:
             python_cmd = "python3"
 
-        subprocess.run([
+        res = subprocess.run([
             python_cmd, "web_scraper_spi/spiders/selenium_tools/selenium_fallback_runner.py",
             url,
             captcha_tipo,
             str(self.counter),  # contador para nombrar el archivo
             self.project_dir #directorio desde page_downloader.py
-        ])
+        ], text=True, capture_output=True)
+        if res.returncode != 0:
+            self.logger.error(f"Selenium fallback failed ({res.returncode}) for {url}\nSTDOUT:\n{res.stdout}\nSTDERR:\n{res.stderr}")
+        else:
+            self.logger.info(f"Selenium fallback OK for {url}\n{res.stdout}")
         self.counter += 1
 
 
