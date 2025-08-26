@@ -1,0 +1,856 @@
+mataf
+inicio
+forex
+cotizaciones
+herramientas de trading
+correlación forex
+índice de divisas
+volatilidad
+global view on financial markets
+distribución de los precios
+puntos pivote
+ajuste el tamaño de la posición
+valor del pip
+value at risk (var)
+martingale
+forex calendario
+mercado de valores
+materias primas
+conversor de divisas
+monedas principales
+divisa de colombia
+divisa de estados unidos
+divisa de venezuela
+divisa de perú
+divisa de méxico
+divisa de unión europea
+divisa de chile
+divisa de argentina
+divisa de bolivia
+divisa de república dominicana
+piezas más solicitado
+convertir peso colombiano a bolívar venezolano
+convertir sol peruano a bolívar venezolano
+convertir bolívar venezolano a peso colombiano
+convertir sol peruano a boliviano
+convertir sol peruano a dólar
+convertir peso mexicano a bolívar venezolano
+convertir dólar canadiense a peso mexicano
+convertir peso chileno a boliviano
+convertir peso chileno a peso colombiano
+convertir unidad de fomento chilena a dólar
+cambio
+gráfico
+evolución precio
+tipo de cambio dólar (usd) sucre ecuatoriano (ecs)
+$
+adf - franco andorrano
+adp - peseta andorrana
+aed - dírham de los emiratos árabes unidos
+afa - afgani
+afn - afgani
+afr - franco francés antiguo
+all - lek
+amd - dram
+ang - florín de las antillas neerlandesas
+aoa - kuanza
+aon - nuevo kwanza angoleño
+ars - peso argentino
+ats - chelín austriaco
+aud - dólar australiano
+awf - florín arubeño
+awg - florín arubeño
+azm - manat azerí
+azn - manat azerí
+bam - marco convertible de bosnia-herzegovina
+bbd - dólar barbadense
+bdt - taka
+bef - franco belga
+bgl - lev fuerte búlgaro
+bgn - lev búlgaro
+bhd - dinar bahreiní
+bif - franco burundés
+bmd - dólar de bermudas
+bnd - dólar bruneano
+bob - boliviano
+brc - cruzado brasileño
+brl - real brasileño
+bsd - dólar bahameño
+btc - bitcoin
+btn - gultrum
+bwp - pula
+byr - rublo bielorruso
+bzd - dólar beliceño
+cad - dólar canadiense
+cdf - franco congoleño
+chf - franco suizo
+clf - unidad de fomento chilena
+clp - peso chileno
+cnh - yuan chino extracontinental
+cny - yuan
+cop - peso colombiano
+crc - colón costarricense
+cuc - peso cubano convertible
+cup - peso cubano
+cve - escudo de cabo verde
+cyp - libra chipriota
+czk - corona checa
+dem - marco alemán
+djf - franco yibutiano
+dkk - corona danesa
+dop - peso dominicano
+dzd - dinar argelino
+ecs - sucre ecuatoriano
+eek - corona estonia
+egp - libra egipcia
+ern - nakfa
+esp - peseta española
+etb - bir
+eur - euro
+fim - marco finlandés
+fjd - dólar fiyiano
+fkp - libra malvinense
+frf - franco francés
+gbp - libra británica
+gbx - pence esterlina
+gel - lari
+ggp - libra
+ghc - cedi ghanés
+ghs - cedi
+gip - libra gibraltareña
+gmd - dalasi
+gnf - franco guineano
+grd - dracma griego
+gtq - quetzal guatemalteco
+gyd - dólar guyanés
+hkd - dólar hongkonés
+hnl - lempira hondureño
+hrk - kuna
+htg - gourde haitiano
+huf - forinto húngaro
+idr - rupia indonesia
+iep - libra irlandesa
+ils - nuevo séquel israelí
+imp - libra
+inr - rupia india
+iqd - dinar iraquí
+irr - rial iraní
+isk - corona islandesa
+itl - lira italiana
+jep - libra
+jmd - dólar jamaicano
+jod - dinar jordano
+jpy - yen
+kes - chelín keniano
+kgs - som
+khr - riel
+kmf - franco comorense
+kpw - won norcoreano
+krw - won surcoreano
+kwd - dinar kuwaití
+kyd - dólar de las islas caimán
+kzt - tenge kazako
+lak - kip
+lbp - libra libanesa
+lkr - rupia esrilanquesa
+lrd - dólar liberiano
+lsl - loti lesothense
+ltc - litecoin
+ltl - litas lituana
+luf - franco luxemburgués
+lvl - lats letón
+lyd - dinar libio
+mad - dírham marroquí
+mcf - franc mónaco
+mdl - leu moldavo
+mga - ariari
+mgf - franco malgache
+mkd - dinar macedonio
+mmk - kiat
+mnt - tugrik
+mop - pataca de macao
+mro - uguiya
+mtl - lira maltesa
+mur - rupia mauriciana
+mvr - rufiya
+mwk - kwacha malauí
+mxn - peso mexicano
+myr - ringit
+mzm - antiguo metical mozambiqueño
+mzn - metical
+nad - dólar namibio
+ngn - naira
+nio - córdoba nicaragüense
+nlg - florín neerlandés
+nok - corona noruega
+npr - rupia nepalí
+ntd - dólar taiwanés
+nzd - dólar neozelandés
+omr - rial omaní
+pab - balboa panameño
+pen - sol peruano
+pgk - kina
+php - peso filipino
+pkr - rupia pakistaní
+pln - esloti
+pte - escudo portugués
+pyg - guaraní paraguayo
+qar - rial catarí
+rol - antiguo leu rumano
+ron - leu rumano
+rsd - dinar serbio
+rub - rublo ruso
+rwf - franco ruandés
+sar - rial saudí
+sbd - dólar salomonense
+scr - rupia seychellense
+sdd - dinar sudanés
+sdg - libra sudanesa
+sdp - libra sudanesa antigua
+sek - corona sueca
+sgd - dólar singapurense
+shp - libra de santa elena
+sit - tólar esloveno
+skk - corona eslovaca
+sll - leona
+sos - chelín somalí
+srd - dólar surinamés
+srg - florín surinamés
+ssp - libra sursudanesa
+std - dobra
+svc - colón salvadoreño
+syp - libra siria
+szl - lilangeni
+thb - bat
+tjs - somoni tayiko
+tmm - manat turcomano
+tmt - manat turcomano
+tnd - dinar tunecino
+top - paanga
+trl - lira turca
+try - lira turca
+ttd - dólar de trinidad y tobago
+tvd - dólar
+twd - nuevo dólar taiwanés
+tzs - chelín tanzano
+uah - grivna
+ugx - chelín ugandés
+usd - dólar
+uyp - peso uruguayo (uyp)
+uyu - peso uruguayo
+uzs - sum
+val - lira
+veb - bolívar venezolano
+vef - bolívar venezolano
+vnd - dong
+vuv - vatu
+wst - tala
+xaf - franco cfa beac
+xag - plata
+xal - onzas de aluminio
+xau - oro
+xcd - dólar del caribe oriental
+xcp - onzas de cobre
+xdg - dogecoin
+xeu - unidad de moneda europea
+xof - franco cfa bceao
+xpd - paladio
+xpf - franco cfp
+xpt - platino
+xrp - ripple
+yer - rial yemení
+yun - dinar convertible yugoslavo
+zar - rand
+zmk - kwacha zambiano
+zmw - kuacha zambiano
+zwd - dólar de zimbabue
+ecs
+adf - franco andorrano
+adp - peseta andorrana
+aed - dírham de los emiratos árabes unidos
+afa - afgani
+afn - afgani
+afr - franco francés antiguo
+all - lek
+amd - dram
+ang - florín de las antillas neerlandesas
+aoa - kuanza
+aon - nuevo kwanza angoleño
+ars - peso argentino
+ats - chelín austriaco
+aud - dólar australiano
+awf - florín arubeño
+awg - florín arubeño
+azm - manat azerí
+azn - manat azerí
+bam - marco convertible de bosnia-herzegovina
+bbd - dólar barbadense
+bdt - taka
+bef - franco belga
+bgl - lev fuerte búlgaro
+bgn - lev búlgaro
+bhd - dinar bahreiní
+bif - franco burundés
+bmd - dólar de bermudas
+bnd - dólar bruneano
+bob - boliviano
+brc - cruzado brasileño
+brl - real brasileño
+bsd - dólar bahameño
+btc - bitcoin
+btn - gultrum
+bwp - pula
+byr - rublo bielorruso
+bzd - dólar beliceño
+cad - dólar canadiense
+cdf - franco congoleño
+chf - franco suizo
+clf - unidad de fomento chilena
+clp - peso chileno
+cnh - yuan chino extracontinental
+cny - yuan
+cop - peso colombiano
+crc - colón costarricense
+cuc - peso cubano convertible
+cup - peso cubano
+cve - escudo de cabo verde
+cyp - libra chipriota
+czk - corona checa
+dem - marco alemán
+djf - franco yibutiano
+dkk - corona danesa
+dop - peso dominicano
+dzd - dinar argelino
+ecs - sucre ecuatoriano
+eek - corona estonia
+egp - libra egipcia
+ern - nakfa
+esp - peseta española
+etb - bir
+eur - euro
+fim - marco finlandés
+fjd - dólar fiyiano
+fkp - libra malvinense
+frf - franco francés
+gbp - libra británica
+gbx - pence esterlina
+gel - lari
+ggp - libra
+ghc - cedi ghanés
+ghs - cedi
+gip - libra gibraltareña
+gmd - dalasi
+gnf - franco guineano
+grd - dracma griego
+gtq - quetzal guatemalteco
+gyd - dólar guyanés
+hkd - dólar hongkonés
+hnl - lempira hondureño
+hrk - kuna
+htg - gourde haitiano
+huf - forinto húngaro
+idr - rupia indonesia
+iep - libra irlandesa
+ils - nuevo séquel israelí
+imp - libra
+inr - rupia india
+iqd - dinar iraquí
+irr - rial iraní
+isk - corona islandesa
+itl - lira italiana
+jep - libra
+jmd - dólar jamaicano
+jod - dinar jordano
+jpy - yen
+kes - chelín keniano
+kgs - som
+khr - riel
+kmf - franco comorense
+kpw - won norcoreano
+krw - won surcoreano
+kwd - dinar kuwaití
+kyd - dólar de las islas caimán
+kzt - tenge kazako
+lak - kip
+lbp - libra libanesa
+lkr - rupia esrilanquesa
+lrd - dólar liberiano
+lsl - loti lesothense
+ltc - litecoin
+ltl - litas lituana
+luf - franco luxemburgués
+lvl - lats letón
+lyd - dinar libio
+mad - dírham marroquí
+mcf - franc mónaco
+mdl - leu moldavo
+mga - ariari
+mgf - franco malgache
+mkd - dinar macedonio
+mmk - kiat
+mnt - tugrik
+mop - pataca de macao
+mro - uguiya
+mtl - lira maltesa
+mur - rupia mauriciana
+mvr - rufiya
+mwk - kwacha malauí
+mxn - peso mexicano
+myr - ringit
+mzm - antiguo metical mozambiqueño
+mzn - metical
+nad - dólar namibio
+ngn - naira
+nio - córdoba nicaragüense
+nlg - florín neerlandés
+nok - corona noruega
+npr - rupia nepalí
+ntd - dólar taiwanés
+nzd - dólar neozelandés
+omr - rial omaní
+pab - balboa panameño
+pen - sol peruano
+pgk - kina
+php - peso filipino
+pkr - rupia pakistaní
+pln - esloti
+pte - escudo portugués
+pyg - guaraní paraguayo
+qar - rial catarí
+rol - antiguo leu rumano
+ron - leu rumano
+rsd - dinar serbio
+rub - rublo ruso
+rwf - franco ruandés
+sar - rial saudí
+sbd - dólar salomonense
+scr - rupia seychellense
+sdd - dinar sudanés
+sdg - libra sudanesa
+sdp - libra sudanesa antigua
+sek - corona sueca
+sgd - dólar singapurense
+shp - libra de santa elena
+sit - tólar esloveno
+skk - corona eslovaca
+sll - leona
+sos - chelín somalí
+srd - dólar surinamés
+srg - florín surinamés
+ssp - libra sursudanesa
+std - dobra
+svc - colón salvadoreño
+syp - libra siria
+szl - lilangeni
+thb - bat
+tjs - somoni tayiko
+tmm - manat turcomano
+tmt - manat turcomano
+tnd - dinar tunecino
+top - paanga
+trl - lira turca
+try - lira turca
+ttd - dólar de trinidad y tobago
+tvd - dólar
+twd - nuevo dólar taiwanés
+tzs - chelín tanzano
+uah - grivna
+ugx - chelín ugandés
+usd - dólar
+uyp - peso uruguayo (uyp)
+uyu - peso uruguayo
+uzs - sum
+val - lira
+veb - bolívar venezolano
+vef - bolívar venezolano
+vnd - dong
+vuv - vatu
+wst - tala
+xaf - franco cfa beac
+xag - plata
+xal - onzas de aluminio
+xau - oro
+xcd - dólar del caribe oriental
+xcp - onzas de cobre
+xdg - dogecoin
+xeu - unidad de moneda europea
+xof - franco cfa bceao
+xpd - paladio
+xpf - franco cfp
+xpt - platino
+xrp - ripple
+yer - rial yemení
+yun - dinar convertible yugoslavo
+zar - rand
+zmk - kwacha zambiano
+zmw - kuacha zambiano
+zwd - dólar de zimbabue
+convertir
+el conversor
+dólar
+/
+sucre ecuatoriano
+se ofrece sin garantía. los precios pueden ser distintos de los que dan las instituciones financieras como los bancos (board of governors of the federal reserve system), los corredores o las compañías que transfieren dinero. más información:
+conversor de divisas
+.
+última actualización:
+25 ago 2025
+envía dinero
+¿es el momento adecuado para cambiar sus divisas?
+el mejor día para cambiar dólares americanos en sucres ecuatorianos fue el
+domingo, 2 febrero 2025
+. en ese momento, la divisa había alcanzado su valor más alto.
+1
+dólares americanos
+=
+27172.2
+sucres ecuatorianos
+el peor día para cambiar dólares americanos en sucres ecuatorianos fue el
+miércoles, 23 julio 2025
+. el tipo de cambio había caído a su valor más bajo.
+1
+dólares americanos
+=
+25228.99
+sucres ecuatorianos
+histórico
+dólar / sucre ecuatoriano
+historia de las tarifas diarias usd /ecs desde lunes, 26 agosto 2024.
+se alcanzó el máximo en
+domingo, 2 febrero 2025
+1 dólar
+=
+27 172.2031 sucre ecuatoriano
+el mínimo en
+miércoles, 23 julio 2025
+1 dólar
+=
+25 228.9908 sucre ecuatoriano
+la historia precio de ecs / usd
+date
+usd
+/ecs
+lunes, 25 agosto 2025
+25 417.5821
+lunes, 18 agosto 2025
+25 531.6250
+lunes, 11 agosto 2025
+25 579.7257
+lunes, 4 agosto 2025
+25 587.2427
+lunes, 28 julio 2025
+25 612.4209
+lunes, 21 julio 2025
+25 399.0201
+lunes, 14 julio 2025
+25 567.1853
+lunes, 7 julio 2025
+25 437.5202
+lunes, 30 junio 2025
+25 275.4022
+lunes, 23 junio 2025
+25 430.4904
+lunes, 16 junio 2025
+25 596.4271
+lunes, 9 junio 2025
+25 627.1934
+lunes, 2 junio 2025
+25 587.7833
+lunes, 26 mayo 2025
+25 514.4044
+lunes, 19 mayo 2025
+25 873.8482
+lunes, 12 mayo 2025
+26 056.5119
+lunes, 5 mayo 2025
+25 827.2853
+lunes, 28 abril 2025
+25 672.9488
+lunes, 21 abril 2025
+25 441.8968
+lunes, 14 abril 2025
+25 873.6669
+lunes, 7 abril 2025
+26 310.4137
+lunes, 31 marzo 2025
+26 280.4241
+lunes, 24 marzo 2025
+26 331.9016
+lunes, 17 marzo 2025
+26 162.7161
+lunes, 10 marzo 2025
+26 254.0708
+lunes, 3 marzo 2025
+26 593.9002
+lunes, 24 febrero 2025
+26 611.2874
+lunes, 17 febrero 2025
+26 634.3999
+lunes, 10 febrero 2025
+26 855.0931
+lunes, 3 febrero 2025
+26 777.3356
+lunes, 27 enero 2025
+26 878.8686
+lunes, 20 enero 2025
+26 592.2045
+lunes, 13 enero 2025
+26 859.6064
+lunes, 6 enero 2025
+26 681.6908
+lunes, 30 diciembre 2024
+26 747.2299
+lunes, 23 diciembre 2024
+26 753.8422
+lunes, 16 diciembre 2024
+26 601.5974
+lunes, 9 diciembre 2024
+26 552.1913
+lunes, 2 diciembre 2024
+26 582.8969
+lunes, 25 noviembre 2024
+26 758.7031
+lunes, 18 noviembre 2024
+26 504.5071
+lunes, 11 noviembre 2024
+26 416.4603
+lunes, 4 noviembre 2024
+26 238.0107
+lunes, 28 octubre 2024
+26 269.2624
+lunes, 21 octubre 2024
+26 296.4264
+lunes, 14 octubre 2024
+26 171.4102
+lunes, 7 octubre 2024
+26 088.0421
+lunes, 30 septiembre 2024
+25 889.4995
+lunes, 23 septiembre 2024
+25 878.7633
+lunes, 16 septiembre 2024
+25 834.1495
+lunes, 9 septiembre 2024
+25 996.1760
+lunes, 2 septiembre 2024
+25 979.8527
+lunes, 26 agosto 2024
+25 866.5652
+la conversión de nuestros usuarios
+cambio de dinar iraquí a dólar
+1 iqd = 0.0008 usd
+cambio de unidad de fomento chilena a dólar
+1 clf = 40.8629 usd
+convertir peso mexicano a rublo ruso
+1 mxn = 4.2993 rub
+conversión boliviano a peso chileno
+1 bob = 140.3756 clp
+convertidor real brasileño a boliviano
+1 brl = 1.2630 bob
+oro a peso colombiano hoy
+1 xau = 13443005.3527 cop
+valor del peso argentino a boliviano
+1 ars = 0.0052 bob
+1 guaraní paraguayo a peso argentino
+1 pyg = 0.1838 ars
+peso chileno a boliviano
+1 clp = 0.0071 bob
+convertir boliviano a sol peruano
+1 bob = 0.5081 pen
+divisa de estados unidos
+iso4217 : usd
+samoa americana
+,
+islas vírgenes británicas
+,
+ecuador
+,
+guam
+,
+micronesia
+,
+palaos
+,
+puerto rico
+,
+islas turcas y caicos
+,
+estados unidos
+,
+islas vírgenes de ee. uu.
+,
+zimbabue
+,
+islas menores alejadas de ee. uu.
+,
+caribe neerlandés
+,
+diego garcía
+,
+haití
+,
+territorio británico del océano índico
+,
+islas marshall
+,
+islas marianas del norte
+,
+panamá
+,
+el salvador
+,
+timor-leste
+usd
+todas las monedas
+todas las monedas
+usd
+divisa de ecuador
+iso4217 : ecs
+ecs
+todas las monedas
+todas las monedas
+ecs
+tabla de conversión: dólares americanos/sucres ecuatorianos
+lunes, 25 agosto 2025
+cantidad
+convertir
+en
+resultado
+1
+dólar
+usd
+usd
+ecs
+25 417.58
+sucres ecuatorianos
+ecs
+2
+dólares americanos
+usd
+usd
+ecs
+50 835.16
+sucres ecuatorianos
+ecs
+3
+dólares americanos
+usd
+usd
+ecs
+76 252.75
+sucres ecuatorianos
+ecs
+4
+dólares americanos
+usd
+usd
+ecs
+101 670.33
+sucres ecuatorianos
+ecs
+5
+dólares americanos
+usd
+usd
+ecs
+127 087.91
+sucres ecuatorianos
+ecs
+10
+dólares americanos
+usd
+usd
+ecs
+254 175.82
+sucres ecuatorianos
+ecs
+15
+dólares americanos
+usd
+usd
+ecs
+381 263.73
+sucres ecuatorianos
+ecs
+20
+dólares americanos
+usd
+usd
+ecs
+508 351.64
+sucres ecuatorianos
+ecs
+25
+dólares americanos
+usd
+usd
+ecs
+635 439.55
+sucres ecuatorianos
+ecs
+100
+dólares americanos
+usd
+usd
+ecs
+2 541 758.21
+sucres ecuatorianos
+ecs
+500
+dólares americanos
+usd
+usd
+ecs
+12 708 791.05
+sucres ecuatorianos
+ecs
+tabla de conversión: usd/ecs
+monedas principales
+divisa
+iso 4217
+peso colombiano
+cop
+bolívar venezolano
+vef
+sol peruano
+pen
+peso mexicano
+mxn
+euro
+eur
+peso chileno
+clp
+peso argentino
+ars
+boliviano
+bob
+peso dominicano
+dop
+quetzal guatemalteco
+gtq
+2003 - 2025 © mataf - 22 years at your service -
+version 25.07.01.us.na.
+.
+.
+about us
+-
+español
+english
+français
+indonesia
+ไทย
+español
+tiếng việt
+hrvatski
+български
+türkçe
+português
+lietuvių
+српски
+magyar
+italiano
+ελληνικά
+русский
+română
+polski
+українська

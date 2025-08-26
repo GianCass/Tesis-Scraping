@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  mongodb:
+      image: mongo:6.0
+      container_name: mongo
+      restart: unless-stopped
+      ports:
+        - "27017:27017"  # expone el puerto al host
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: example
+      volumes:
+        - mongo_data:/data/db
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=info
+      - TZ=UTC
+    ports:
+      - "8191:8191"
+
+  scraper:
+    image: spi_scraper:latest
+    container_name: scraper
+    command: python3 extraccion/main.py
+    environment:
+      - FLARESOLVERR_URL=http://flaresolverr:8191
+      - MONGO_URI=mongodb://root:example@mongodb:27017/?authSource=admin
+    volumes:
+      - ./extraccion:/app/extraccion
+      - ./dataset:/app/dataset
+    entrypoint: ["with-xvfb"]
+
+volumes:
+  mongo_data:
