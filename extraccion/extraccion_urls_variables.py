@@ -5,11 +5,11 @@ import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# archivo excel variables
-archivo_excel = os.path.join('extraccion', 'dataset', 'edaSisPricingInt_variables.xlsx')
+# archivo csv variables
+archivo_csv = os.path.join('extraccion', 'dataset', 'edaSisPricingInt_variables.csv')
 
 
-def extraccion_eda(hoja=0):
+def extraccion_eda():
     carpeta_destino = os.path.join('dataset', 'datos_extraidos_variables')
     os.makedirs(carpeta_destino, exist_ok=True)
 
@@ -17,17 +17,17 @@ def extraccion_eda(hoja=0):
     ruta_estaticas = os.path.join(carpeta_destino, 'estaticas.txt')
     ruta_dinamicas = os.path.join(carpeta_destino, 'dinamicas.txt')
 
-    ruta_absoluta = os.path.abspath(archivo_excel)
+    ruta_absoluta = os.path.abspath(archivo_csv)
 
-    if not os.path.exists(archivo_excel):
+    if not os.path.exists(archivo_csv):
         print("ERROR: El archivo Excel no existe en la ruta especificada")
         return 0, 0
 
-    df = pd.read_excel(ruta_absoluta, sheet_name=hoja)
+    df = pd.read_csv(ruta_absoluta)
 
     if 'Link' not in df.columns or 'Formato' not in df.columns:
         print("❌ Faltan columnas necesarias ('Link', 'Formato')")
-        return
+        return 0, 0
 
     df_limpio = df.dropna(subset=["Link", "Formato"])
 
@@ -57,7 +57,7 @@ def descargar_paginas_scrapy_y_selenium():
 
 def extraccion_controller():
     try:
-        num_estaticas, num_dinamicas = extraccion_eda(hoja=0)
+        num_estaticas, num_dinamicas = extraccion_eda()
 
         if num_estaticas == 0 and num_dinamicas == 0:
             print("No se procesaron URLs Variables. Verificar archivo Excel.")

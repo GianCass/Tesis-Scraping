@@ -6,10 +6,10 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from captcha import save_cookies
 
-archivo_excel = os.path.join('extraccion', 'dataset', 'edaSisPricingInt.xlsx')
+archivo_csv = os.path.join('extraccion', 'dataset', 'edaSisPricingInt.csv')
 
 
-def extraer_urls_excel(archivo_excel, columna_url='URL', columna_tipo='Tipo Pagina', columna_captcha='Captcha?', hoja=0):
+def extraer_urls_csv(archivo_csv, columna_url='URL', columna_tipo='Tipo Pagina', columna_captcha='Captcha?'):
     carpeta_destino = os.path.join('dataset', 'datos_extraidos')
     os.makedirs(carpeta_destino, exist_ok=True)
 
@@ -17,20 +17,20 @@ def extraer_urls_excel(archivo_excel, columna_url='URL', columna_tipo='Tipo Pagi
     ruta_estaticas = os.path.join(carpeta_destino, 'estaticas.txt')
     ruta_dinamicas = os.path.join(carpeta_destino, 'dinamicas.txt')
 
-    # Leer el archivo Excel
-    ruta_absoluta = os.path.abspath(archivo_excel)
+    # Leer el archivo CSV
+    ruta_absoluta = os.path.abspath(archivo_csv)
 
-    if not os.path.exists(archivo_excel):
+    if not os.path.exists(archivo_csv):
         print("ERROR: El archivo Excel no existe en la ruta especificada")
         return 0, 0
 
-    df = pd.read_excel(ruta_absoluta, sheet_name=hoja)
+    df = pd.read_csv(ruta_absoluta)
 
     # Filtrar filas donde URL y Tipo Pagina no sean nulos
     df_limpio = df.dropna(subset=[columna_url, columna_tipo])
 
     # Rellenar NaNs en Captcha con cadena vacía
-    df_limpio[columna_captcha] = df_limpio[columna_captcha].fillna("")
+    # df_limpio[columna_captcha] = df_limpio[columna_captcha].fillna("")
 
     # Guardar URLs estáticas con captcha
     with open(ruta_estaticas, 'w', encoding='utf-8') as archivo:
@@ -63,7 +63,7 @@ def descargar_paginas_scrapy_y_selenium():
 
 def extraccion_controller():
     try:
-        num_estaticas, num_dinamicas = extraer_urls_excel(archivo_excel)
+        num_estaticas, num_dinamicas = extraer_urls_csv(archivo_csv)
 
         if num_estaticas == 0 and num_dinamicas == 0:
             print("No se procesaron URLs. Verificar archivo Excel.")
@@ -75,10 +75,10 @@ def extraccion_controller():
         print(f"Error en el proceso de extracción: {e}")
 
 
-def verificar_tipos_pagina(archivo_excel, columna_tipo='Tipo Pagina', hoja=0):
+def verificar_tipos_pagina(archivo_csv, columna_tipo='Tipo Pagina'):
     try:
-        ruta_absoluta = os.path.abspath(archivo_excel)
-        df = pd.read_excel(ruta_absoluta, sheet_name=hoja)
+        ruta_absoluta = os.path.abspath(archivo_csv)
+        df = pd.read_csv(ruta_absoluta)
         tipos_unicos = df[columna_tipo].value_counts()
         return tipos_unicos
     except Exception as e:

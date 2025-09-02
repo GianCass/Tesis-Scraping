@@ -5,14 +5,32 @@ import json
 from bs4 import BeautifulSoup
 from seleniumbase import SB
 from urllib.parse import urlparse
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..')))
-from captcha import captcha
 import hashlib
 from urllib.parse import urlparse, unquote
+from pymongo import MongoClient
+from datetime import datetime
+import logging
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..')))
+from captcha import captcha
+
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 
 url = sys.argv[1]
 captcha_tipo = sys.argv[2]
 project_dir = sys.argv[3]
+
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/bodies_scraping")
+client = MongoClient(MONGO_URI)
+db_name = MONGO_URI.rsplit('/', 1)[-1] or "bodies_scraping"
+db = client[db_name]
+collection = db['vars']
 
 
 selectors = {
@@ -22,7 +40,7 @@ selectors = {
 }
 
 
-def _safe_filename_from_url(url: str, ext=".txt"):
+def _safe_filename_from_url(url: str):
         """Genera un nombre estable y único a partir de la URL."""
         u = urlparse(url)
         # basename del path (sin / final)
@@ -30,7 +48,7 @@ def _safe_filename_from_url(url: str, ext=".txt"):
         base = unquote(base) or "index"
         # agrega hash corto para distinguir querystrings
         h = hashlib.md5(url.encode("utf-8")).hexdigest()[:8]
-        return f"{base}_{h}{ext}"
+        return f"{base}_{h}"
 
 
 def guardar_html(contenido, url):
@@ -65,20 +83,32 @@ def guardar_html(contenido, url):
     else:
         texto_limpio = ""
 
-    output_dir = os.path.join(project_dir, 'extraccion', 'dataset', 'paginas_descargadas_vars')
-    os.makedirs(output_dir, exist_ok=True)
-    nombre = _safe_filename_from_url(url, ext=".txt")
-    filepath = os.path.join(output_dir, nombre)
+    # output_dir = os.path.join(project_dir, 'extraccion', 'dataset', 'paginas_descargadas_vars')
+    # os.makedirs(output_dir, exist_ok=True)
+    nombre = _safe_filename_from_url(url)
+    # filepath = os.path.join(output_dir, nombre)
 
-    with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(texto_limpio)
+    # with open(filepath, 'w', encoding='utf-8') as f:
+    #     f.write(texto_limpio)
 
-    print(f"✅ HTML guardado: {filepath} para {url}")
+    uid = nombre
+    base_uid = uid.split("_")[0]  # "producto"
+    documento = {
+        "uid": uid,
+        "base_uid": base_uid,
+        "nombre_var": str(nombre),
+        "text_raw": str(texto_limpio),
+        "text_clear": "-",
+        "Fecha": datetime.now()
+    }
+
+    collection.replace_one({"uid": uid}, documento, upsert=True)
+    logging.info(f"✅ Guardado en MongoDB body con uid={uid}")
 
 
 
 with SB(uc=True) as sb:
-    print(f"🔍 Cargando variable: {url} con SB 🔍\n")
+    logging.info(f"🔍 Cargando variable: {url} con SB 🔍\n")
     sb.activate_cdp_mode(url)
     sb.uc_gui_click_captcha()
     sb.cdp.sleep(5)
@@ -91,15 +121,15 @@ with SB(uc=True) as sb:
     for selector in vars_selectors:
         if(status_element == False):
             try:
-                sb.cdp.wait_for_element_visible(selector, timeout=200)
+                sb.cdp.wait_for_element_visible(selector, timeout=250)
                 # print(f"✅ Variable detectada en {selector}")
                 status_element = True
                 break
             except Exception as e:
-                print(f"⚠️ No encontrado: {selector} - Posiblemente la pagina cambio o la variable no existe")
-                continue
+                logging.warning(f"⚠️ No encontrado: {selector} - Posiblemente la pagina cambio o la variable no existe")
+                break
         else:
-            print(f"\n⚠️ Variable no detectada en {selector}, todos los selectores fueron recorridos\n")
+            logging.warning(f"\n⚠️ Variable no detectada en {selector}, todos los selectores fueron recorridos\n")
             break
 
 
@@ -139,14 +169,13 @@ with SB(uc=True) as sb:
     if captcha_tipo == "cloudflare" or captcha_tipo == "no":
         for selector in cloudflare_selectors:
             if sb.cdp.is_element_visible(selector):
-                print("⚠️ Cloudflare visible ⚠️")
                 status_captcha = True
                 tipo_captcha_detectado = "cloudflare"
                 break
 
 
 
-    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
+    logging.info("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
 
 
     # resolver captchas al detectar con solve capthca de SB, sino con metodos creados previamente - DONE

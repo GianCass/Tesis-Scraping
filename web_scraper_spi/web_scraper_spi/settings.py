@@ -24,6 +24,8 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 DOWNLOAD_DELAY = 1.0
 RANDOMIZE_DOWNLOAD_DELAY = True
 
+LOG_LEVEL = 'WARNING'
+
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True

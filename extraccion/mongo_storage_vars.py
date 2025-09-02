@@ -36,6 +36,7 @@ def mongo_storage():
 
         documento = {
             "uid": uid,
+            "nombre_var": "",
             "text_raw": contenido,
             "text_clear": "-",
             "Fecha": datetime.now(),

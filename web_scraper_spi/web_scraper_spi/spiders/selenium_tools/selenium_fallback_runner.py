@@ -1,10 +1,15 @@
 import sys
 import os
 import time
+from datetime import datetime
+from pymongo import MongoClient
 import json
 from bs4 import BeautifulSoup
 from seleniumbase import SB
 from urllib.parse import urlparse
+import logging
+
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..')))
 from captcha import captcha
 
@@ -13,6 +18,19 @@ captcha_tipo = sys.argv[2]
 counter = sys.argv[3]
 project_dir = sys.argv[4]
 
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/bodies_scraping")
+client = MongoClient(MONGO_URI)
+db_name = MONGO_URI.rsplit('/', 1)[-1] or "bodies_scraping"
+db = client[db_name]
+collection = db['bodies']
+
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 
 selectors = {
     "www.heb.com.mx": ["div.price"],
@@ -34,7 +52,7 @@ selectors = {
     "www.smrey.com": ["div.cart__actions__price"],
     "www.pricesmart.com": ["span.sf-price__regular"],
     "biggie.com.py": ["p.priceArticle"],
-    "www.chedraui.com.mx": ["span.chedrauimx-add-to-cart-button-0-x-currencyContainer"],
+    "www.chedraui.com.mx": ["span.chedrauimx-products-simulator-0-x-simulatedSellingPrice"],
     "www.alsuper.com": ["div.as-price-container"],
     "mercado.carrefour.com.br": ["span.text-pdp-price"],
     "www.paodeacucar.com": [".ComparativePrice-sc-"],  # fragmento de clase
@@ -91,19 +109,32 @@ def guardar_html(contenido):
     if styles_iconpack_div:
         styles_iconpack_div.decompose()
 
-    output_dir = os.path.join(project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
-    os.makedirs(output_dir, exist_ok=True)
-    filename = f"{counter}.html"
-    filepath = os.path.join(output_dir, filename)
-    with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(str(body))
+    body = soup.body
 
-    print(f"HTML guardado: {filepath} para {url}")
+    # output_dir = os.path.join(project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
+    # os.makedirs(output_dir, exist_ok=True)
+    # filename = f"{counter}.html"
+    # filepath = os.path.join(output_dir, filename)
+    # with open(filepath, 'w', encoding='utf-8') as f:
+    #         f.write(str(body))
+
+    uid = str(counter)
+    collection.delete_one({"uid": uid})
+    documento = {
+        "uid": uid,
+        "text_raw": str(body),
+        "text_clear": "-",
+        "Fecha": datetime.now(),
+        "Product object": {}
+    }
+
+    collection.insert_one(documento)
+    logging.info(f"✅ Guardado en MongoDB body con uid={uid}")
 
 
 
 with SB(uc=True) as sb:
-    print(f"🔍 Cargando: {url} con SB 🔍\n")
+    print(f"🔍 Cargando: {url} con SB 🔍\n", flush=True)
     sb.activate_cdp_mode(url)
     sb.uc_gui_click_captcha()
     sb.cdp.sleep(5)
@@ -121,12 +152,12 @@ with SB(uc=True) as sb:
     # Espera por precio dinámico => Pagina cargada completamente - DONE
     for selector in price_selectors:
         try:
-            sb.cdp.wait_for_element_visible(selector, timeout=200)
+            sb.cdp.wait_for_element_visible(selector, timeout=250)
             # print(f"✅ Precio detectado en {selector}")
             break
         except Exception as e:
-            print(f"⚠️ No encontrado: {selector} - Posiblemente selector cambio")
-            continue
+            logging.warning(f"⚠️ No encontrado: {selector} - Posiblemente selector cambio")
+            break
 
 
     # HTML de la pagina - DONE
@@ -171,7 +202,7 @@ with SB(uc=True) as sb:
                 break
 
 
-    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
+    logging.info("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
 
 
     # resolver captchas al detectar con solve capthca de SB, sino con metodos creados previamente - DONE

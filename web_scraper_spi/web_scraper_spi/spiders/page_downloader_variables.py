@@ -12,8 +12,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urlparse
 import random
+import logging
 import time
+from pymongo import MongoClient
 import json
+from datetime import datetime
 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
@@ -28,6 +31,12 @@ import pickle
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/bodies_scraping")
+client = MongoClient(MONGO_URI)
+db_name = MONGO_URI.rsplit('/', 1)[-1] or "bodies_scraping"
+db = client[db_name]
+collection = db['vars']
 
 
 class PageDownloaderVariablesSpider(scrapy.Spider):
@@ -58,7 +67,7 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
                         url = linea.strip()
                         if not url:
                             continue
-                        self.logger.info(f"⚡ Usando Selenium directo para dinámica: {url}")
+                        print(f"⚡ Usando Selenium directo para dinámica: {url}")
 
                         # Llamada directa al fallback con un "failure" falso que contiene la URL
                         fake_failure = type('FakeFailure', (), {
@@ -216,7 +225,7 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
         else:
             self.logger.info(f"Selenium fallback OK for {url}\n{res.stdout}")
 
-    def _safe_filename_from_url(self, url: str, ext=".txt"):
+    def _safe_filename_from_url(self, url: str):
         """Genera un nombre estable y único a partir de la URL."""
         u = urlparse(url)
         # basename del path (sin / final)
@@ -224,7 +233,7 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
         base = unquote(base) or "index"
         # agrega hash corto para distinguir querystrings
         h = hashlib.md5(url.encode("utf-8")).hexdigest()[:8]
-        return f"{base}_{h}{ext}"
+        return f"{base}_{h}"
 
 
     def guardar_html(self, contenido, url):
@@ -260,12 +269,25 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
         else:
             texto_limpio = ""
 
-        output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas_vars')
-        os.makedirs(output_dir, exist_ok=True)
-        nombre = self._safe_filename_from_url(url, ext=".txt")
-        filepath = os.path.join(output_dir, nombre)
+        # output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas_vars')
+        # os.makedirs(output_dir, exist_ok=True)
+        nombre = self._safe_filename_from_url(url)
+        # filepath = os.path.join(output_dir, nombre)
 
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(texto_limpio)
+        # with open(filepath, 'w', encoding='utf-8') as f:
+        #     f.write(texto_limpio)
 
-        self.logger.info(f"\n\n\n\n\nGuardado solo <body> para {nombre}: {filepath}\n\n\n\n\n")
+        uid = nombre
+        base_uid = uid.split("_")[0]  # "producto"
+        documento = {
+            "uid": uid,
+            "base_uid": base_uid,
+            "nombre_var": str(nombre),
+            "text_raw": str(texto_limpio),
+            "text_clear": "-",
+            "Fecha": datetime.now()
+        }
+
+        # collection.insert_one(documento)
+        collection.replace_one({"base_uid": base_uid}, documento, upsert=True)
+        self.logger.info(f"✅ Guardado en MongoDB body con uid={uid}")

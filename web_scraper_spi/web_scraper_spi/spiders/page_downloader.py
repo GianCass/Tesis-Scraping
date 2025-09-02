@@ -1,32 +1,27 @@
+from datetime import datetime
 import scrapy
 from scrapy.http import Request
 import os
 import sys
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from urllib.parse import urlparse
 import random
-import time
-import json
 
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.expected_conditions import visibility_of_element_located
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from pymongo import MongoClient
 
 import subprocess
 
 
-import pickle
-
-
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/bodies_scraping")
+client = MongoClient(MONGO_URI)
+db_name = MONGO_URI.rsplit('/', 1)[-1] or "bodies_scraping"
+db = client[db_name]
+collection = db['bodies']
 
 
 class PageDownloaderSpider(scrapy.Spider):
@@ -478,20 +473,8 @@ class PageDownloaderSpider(scrapy.Spider):
             self.logger.warning("No se encontró <body> en el HTML.")
             return
 
-        for header in body.find_all(['header', 'footer', 'nav']):
-            header.decompose()
-
-        for script in body.find_all('script'):
-            script.decompose()
-
-        for template in body.find_all('template'):
-            template.decompose()
-
-        for style in body.find_all('style'):
-            style.decompose()
-
-        for iframe in body.find_all('iframe'):
-            iframe.decompose()
+        for tag in body.find_all(['header', 'footer', 'nav', 'script', 'template', 'style', 'iframe']):
+            tag.decompose()
 
 
         styles_iconpack_div = body.find('div', id='styles_iconpack')
@@ -500,13 +483,25 @@ class PageDownloaderSpider(scrapy.Spider):
 
         body = soup.body
 
-        output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
-        os.makedirs(output_dir, exist_ok=True)
-        filename = f"{self.counter}.html"
+        # output_dir = os.path.join(self.project_dir, 'extraccion', 'dataset', 'paginas_descargadas')
+        # os.makedirs(output_dir, exist_ok=True)
+        # filename = f"{self.counter}.html"
+        # self.counter += 1
+        # filepath = os.path.join(output_dir, filename)
+
+        # with open(filepath, 'w', encoding='utf-8') as f:
+        #     f.write(str(body))
+
+        uid = str(self.counter)
+        collection.delete_one({"uid": uid})
+        documento = {
+            "uid": uid,
+            "text_raw": str(body),
+            "text_clear": "-",
+            "Fecha": datetime.now(),
+            "Product object": {}
+        }
+
+        collection.insert_one(documento)
+        self.logger.info(f"✅ Guardado en MongoDB body con uid={uid}")
         self.counter += 1
-        filepath = os.path.join(output_dir, filename)
-
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(str(body))
-
-        self.logger.info(f"\n\n\n\n\nGuardado solo <body> para {self.counter - 1}: {filepath}\n\n\n\n\n")
