@@ -18,15 +18,12 @@ def extraccion_eda(hoja=0):
     ruta_dinamicas = os.path.join(carpeta_destino, 'dinamicas.txt')
 
     ruta_absoluta = os.path.abspath(archivo_excel)
-    print(f"Buscando archivo en: {ruta_absoluta}")
-    print(f"¿Existe el archivo? {os.path.exists(archivo_excel)}")
 
     if not os.path.exists(archivo_excel):
         print("ERROR: El archivo Excel no existe en la ruta especificada")
         return 0, 0
 
     df = pd.read_excel(ruta_absoluta, sheet_name=hoja)
-    print("📄 Archivo leído correctamente")
 
     if 'Link' not in df.columns or 'Formato' not in df.columns:
         print("❌ Faltan columnas necesarias ('Link', 'Formato')")
@@ -54,7 +51,6 @@ def descargar_paginas_scrapy_y_selenium():
     try:
         project_dir = os.path.join(os.getcwd(), 'web_scraper_spi')
         subprocess.run(["scrapy", "crawl", "page_downloader_variables"], cwd=project_dir, check=True)
-        print("Descarga completada con Scrapy Variables!")
     except Exception as e:
         print(f"Error al ejecutar Scrapy Variables: {e}")
 
@@ -68,6 +64,5 @@ def extraccion_controller():
             return
 
         descargar_paginas_scrapy_y_selenium()
-        print(f"Proceso completado Variables: {num_estaticas} URLs estáticas y {num_dinamicas} URLs dinámicas procesadas")
     except Exception as e:
         print(f"Error en el proceso de extracción: {e}")

@@ -69,21 +69,6 @@ selectors = {
 
 
 
-
-# def obtener_status_code(sb, target_url):
-#     try:
-#         logs = sb.driver.get_log("performance")
-#         for entry in logs:
-#             log = json.loads(entry["message"])["message"]
-#             if log["method"] == "Network.responseReceived":
-#                 response = log["params"]["response"]
-#                 if target_url in response["url"]:
-#                     return response["status"]
-#     except Exception as e:
-#         print(f"Error obteniendo status code: {e}")
-#     return 200
-
-
 def guardar_html(contenido):
     soup = BeautifulSoup(contenido, 'html.parser')
     body = soup.body
@@ -113,7 +98,7 @@ def guardar_html(contenido):
     with open(filepath, 'w', encoding='utf-8') as f:
             f.write(str(body))
 
-    print(f"✅ HTML guardado: {filepath} para {url}")
+    print(f"HTML guardado: {filepath} para {url}")
 
 
 
@@ -127,20 +112,20 @@ with SB(uc=True) as sb:
     dominio = urlparse(url).netloc
     price_selectors = selectors.get(dominio, [])
 
-    if (dominio == "www.maxipali.co.cr"):
-         print("Contenido visible detras el banner, si es que aparecio")
-    elif (dominio == "despensa.bodegaaurrera.com.mx"):
-         print("Contenido visible detras el banner, si es que aparecio")
+    # if (dominio == "www.maxipali.co.cr"):
+    #      print("Contenido visible detras el banner, si es que aparecio")
+    # elif (dominio == "despensa.bodegaaurrera.com.mx"):
+    #      print("Contenido visible detras el banner, si es que aparecio")
 
 
     # Espera por precio dinámico => Pagina cargada completamente - DONE
     for selector in price_selectors:
         try:
             sb.cdp.wait_for_element_visible(selector, timeout=200)
-            print(f"✅ Precio detectado en {selector}")
+            # print(f"✅ Precio detectado en {selector}")
             break
         except Exception as e:
-            print(f"⚠️ No encontrado: {selector} - Posiblemente la pagina cambio o el producto no existe | {e}")
+            print(f"⚠️ No encontrado: {selector} - Posiblemente selector cambio")
             continue
 
 
@@ -174,7 +159,6 @@ with SB(uc=True) as sb:
     if captcha_tipo == "recaptcha" or captcha_tipo == "no":
         for selector in recaptcha_selectors:
             if sb.cdp.is_element_visible(selector):
-                print("⚠️ reCAPTCHA visible ⚠️")
                 status_captcha = True
                 tipo_captcha_detectado = "recaptcha"
                 break
@@ -182,14 +166,12 @@ with SB(uc=True) as sb:
     if captcha_tipo == "cloudflare" or captcha_tipo == "no":
         for selector in cloudflare_selectors:
             if sb.cdp.is_element_visible(selector):
-                print("⚠️ Cloudflare visible ⚠️")
                 status_captcha = True
                 tipo_captcha_detectado = "cloudflare"
                 break
 
 
-
-    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha))
+    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
 
 
     # resolver captchas al detectar con solve capthca de SB, sino con metodos creados previamente - DONE
@@ -199,14 +181,12 @@ with SB(uc=True) as sb:
                 sb.uc_gui_click_captcha()
                 resolved_html = sb.cdp.get_page_source()
             except Exception as e:
-                print("UC_GUI_CLICK_CAPTCHA de SB no pudo pasar el captcha Cloudflare. Intentando con Captcha Solver\n")
                 resolved_html = captcha.cloudflare(url)
         elif (tipo_captcha_detectado == "recaptcha"):
             try:
                 sb.uc_gui_click_captcha()
                 resolved_html = sb.cdp.get_page_source()
             except Exception as e:
-                print("UC_GUI_CLICK_CAPTCHA de SB no pudo pasar el captcha reCAPTCHA. Intentando con Captcha Solver\n")
                 resolved_html = captcha.recaptcha(url)
         guardar_html(resolved_html)
     else:

@@ -19,8 +19,6 @@ def extraer_urls_excel(archivo_excel, columna_url='URL', columna_tipo='Tipo Pagi
 
     # Leer el archivo Excel
     ruta_absoluta = os.path.abspath(archivo_excel)
-    print(f"Buscando archivo en: {ruta_absoluta}")
-    print(f"¿Existe el archivo? {os.path.exists(archivo_excel)}")
 
     if not os.path.exists(archivo_excel):
         print("ERROR: El archivo Excel no existe en la ruta especificada")
@@ -58,7 +56,6 @@ def descargar_paginas_scrapy_y_selenium():
     try:
         project_dir = os.path.join(os.getcwd(), 'web_scraper_spi')
         subprocess.run(["scrapy", "crawl", "page_downloader"], cwd=project_dir, check=True)
-        print("Descarga completada con Scrapy!")
     except Exception as e:
         print(f"Error al ejecutar Scrapy: {e}")
 
@@ -83,8 +80,6 @@ def verificar_tipos_pagina(archivo_excel, columna_tipo='Tipo Pagina', hoja=0):
         ruta_absoluta = os.path.abspath(archivo_excel)
         df = pd.read_excel(ruta_absoluta, sheet_name=hoja)
         tipos_unicos = df[columna_tipo].value_counts()
-        print("Tipos de página encontrados:")
-        print(tipos_unicos)
         return tipos_unicos
     except Exception as e:
         print(f"Error al verificar tipos de página: {e}")

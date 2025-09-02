@@ -92,11 +92,11 @@ with SB(uc=True) as sb:
         if(status_element == False):
             try:
                 sb.cdp.wait_for_element_visible(selector, timeout=200)
-                print(f"✅ Variable detectada en {selector}")
+                # print(f"✅ Variable detectada en {selector}")
                 status_element = True
                 break
             except Exception as e:
-                print(f"⚠️ No encontrado: {selector} - Posiblemente la pagina cambio o la variable no existe | {e}")
+                print(f"⚠️ No encontrado: {selector} - Posiblemente la pagina cambio o la variable no existe")
                 continue
         else:
             print(f"\n⚠️ Variable no detectada en {selector}, todos los selectores fueron recorridos\n")
@@ -132,7 +132,6 @@ with SB(uc=True) as sb:
     if captcha_tipo == "recaptcha" or captcha_tipo == "no":
         for selector in recaptcha_selectors:
             if sb.cdp.is_element_visible(selector):
-                print("⚠️ reCAPTCHA visible ⚠️")
                 status_captcha = True
                 tipo_captcha_detectado = "recaptcha"
                 break
@@ -147,7 +146,7 @@ with SB(uc=True) as sb:
 
 
 
-    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha))
+    print("\nEl estado de captcha para " + url + "es: " + str(status_captcha) + " " + tipo_captcha_detectado)
 
 
     # resolver captchas al detectar con solve capthca de SB, sino con metodos creados previamente - DONE
@@ -157,14 +156,12 @@ with SB(uc=True) as sb:
                 sb.uc_gui_click_captcha()
                 resolved_html = sb.cdp.get_page_source()
             except Exception as e:
-                print("UC_GUI_CLICK_CAPTCHA de SB no pudo pasar el captcha Cloudflare. Intentando con Captcha Solver\n")
                 resolved_html = captcha.cloudflare(url)
         elif (tipo_captcha_detectado == "recaptcha"):
             try:
                 sb.uc_gui_click_captcha()
                 resolved_html = sb.cdp.get_page_source()
             except Exception as e:
-                print("UC_GUI_CLICK_CAPTCHA de SB para vars no pudo pasar el captcha reCAPTCHA. Intentando con Captcha Solver\n")
                 resolved_html = captcha.recaptcha(url)
         guardar_html(resolved_html, url)
     else:

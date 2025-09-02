@@ -123,8 +123,6 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
     def detectar_captcha(self, page_source, url, captcha_tipo="no"):
         soup = BeautifulSoup(page_source, 'html.parser')
 
-        print("Detectando captcha para " + url)
-
         cloudflare_selectors = [
             "#challenge-form",
             "#cf-content",
@@ -201,7 +199,6 @@ class PageDownloaderVariablesSpider(scrapy.Spider):
             self.logger.error("Error desconocido en fallback.")
             return
 
-        self.logger.warning(f"Selenium (SeleniumBase) usándose como fallback para variable: {url}")
 
         if sys.platform.startswith("win"):
             python_cmd = "python"

@@ -6,11 +6,11 @@ import mongo_storage_vars as mongo_vars
 def iniciar_proceso():
     print("👉 Iniciando extracción de productos…")
     extract.extraccion_controller()
-    mongo.mongo_storage()
+    # mongo.mongo_storage()
 
     print("👉 Iniciando extracción de variables…")
     extract_vars.extraccion_controller()
-    mongo_vars.mongo_storage()
+    # mongo_vars.mongo_storage()
 
     print("\n✅ Proceso completo.\n")
 

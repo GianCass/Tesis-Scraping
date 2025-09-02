@@ -22,14 +22,11 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import subprocess
 
 
-#import undetected_chromedriver as uc
-#from undetected_chromedriver import Chrome, ChromeOptions
 import pickle
 
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
-#from captcha import captcha
 
 
 class PageDownloaderSpider(scrapy.Spider):
@@ -138,7 +135,7 @@ class PageDownloaderSpider(scrapy.Spider):
         status_captcha, tipo = self.detectar_captcha(body_text, response.url, captcha_tipo)
 
         if(status_captcha == True):
-            print(f"⚠️⚠️ Captcha detectado ({tipo}) en Scrapy. Usando Selenium como fallback... ⚠️⚠️")
+            print(f"Captcha detectado ({tipo}) en Scrapy. Usando Selenium como fallback...")
 
             fake_failure = type('FakeFailure', (), {
                 'request': type('RequestMock', (), {'url': response.url})(),
@@ -219,8 +216,6 @@ class PageDownloaderSpider(scrapy.Spider):
     def detectar_captcha(self, page_source, url, captcha_tipo="no"):
         soup = BeautifulSoup(page_source, 'html.parser')
         # visible_text = soup.get_text(separator=' ', strip=True).lower()
-
-        print("Detectando captcha para " + url)
 
         cloudflare_selectors = [
             "#challenge-form",
@@ -455,8 +450,6 @@ class PageDownloaderSpider(scrapy.Spider):
         else:
             self.logger.error("Error desconocido en fallback.")
             return
-
-        self.logger.warning(f"Selenium (SeleniumBase) usándose como fallback para: {url}")
 
         if sys.platform.startswith("win"):
             python_cmd = "python"

@@ -68,7 +68,6 @@ def start_flaresolverr():
         stderr=subprocess.DEVNULL,
     )
 
-    print("⏳ Esperando a que FlareSolverr esté disponible...")
     for _ in range(10):
         if is_flaresolverr_running():
             print("✅ FlareSolverr está corriendo.")
@@ -76,7 +75,6 @@ def start_flaresolverr():
         sleep(1)
 
     print("❌ No se pudo iniciar FlareSolverr.")
-    print("\nVerificar estas condiciones ademas: Install Chrome (all OS) or Chromium (just Linux, it doesn't work in Windows) web browser.\n(Only in Linux) Install Xvfb package.\n(Only in macOS) Install XQuartz package.\n")
     sys.exit(1)
 
 
@@ -142,7 +140,6 @@ def recaptcha(url):
         )
 
         status = solver.solve_recaptcha()
-        # if status and "recaptcha-success" in driver.page_source:
         if status:
             print("✅ reCAPTCHA resuelto automáticamente.")
             sleep(2)
@@ -150,7 +147,6 @@ def recaptcha(url):
             raise Exception("No se pudo resolver automáticamente")
 
     except Exception as e:
-        print(f"\n⚠️ No se pudo resolver automáticamente: {e}")
         print("Esperando que el usuario resuelva el reCAPTCHA manualmente...")
         print("👉 Una vez resuelto, presiona ENTER para continuar.\n")
         # input()  # Usuario confirma resolucion del Recaptcha
@@ -159,5 +155,4 @@ def recaptcha(url):
     finally:
         html = driver.page_source
         driver.quit()
-        print("🚪 Cerrando navegador tras resolución de reCAPTCHA.")
         return html
