@@ -32,6 +32,10 @@ logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)]
 )
 
+
+
+
+
 selectors = {
     "www.heb.com.mx": ["div.price"],
     "www.lacomer.com.mx": ["span.txt-whitout-line.ng-binding"],
@@ -133,15 +137,17 @@ def guardar_html(contenido):
 
 
 
-with SB(uc=True) as sb:
-    print(f"🔍 Cargando: {url} con SB 🔍\n", flush=True)
+with SB(uc=True, block_images=True) as sb:
+    logging.info(f"🔍 Cargando: {url} con SB 🔍\n")
     sb.activate_cdp_mode(url)
     sb.uc_gui_click_captcha()
     sb.cdp.sleep(5)
 
 
     dominio = urlparse(url).netloc
+    logging.info(dominio)
     price_selectors = selectors.get(dominio, [])
+    logging.info(price_selectors)
 
     # if (dominio == "www.maxipali.co.cr"):
     #      print("Contenido visible detras el banner, si es que aparecio")
@@ -151,6 +157,7 @@ with SB(uc=True) as sb:
 
     # Espera por precio dinámico => Pagina cargada completamente - DONE
     for selector in price_selectors:
+        logging.info(selector)
         try:
             sb.cdp.wait_for_element_visible(selector, timeout=250)
             # print(f"✅ Precio detectado en {selector}")
@@ -181,9 +188,8 @@ with SB(uc=True) as sb:
 
     # 2) reCAPTCHA v2 / v3 / invisible
     recaptcha_selectors = [
-        "div.g-recaptcha",
-        "div.recaptcha-checkbox",  # checkbox visible en v2
-        ".grecaptcha-badge",  # visible en invisible v3
+        "span.recaptcha-checkbox",  # checkbox visible en v2
+        "div.grecaptcha-badge",  # visible en invisible v3
     ]
 
     # use SB instead of simple search - DONE

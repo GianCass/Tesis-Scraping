@@ -107,7 +107,7 @@ def guardar_html(contenido, url):
 
 
 
-with SB(uc=True) as sb:
+with SB(uc=True, block_images=True) as sb:
     logging.info(f"🔍 Cargando variable: {url} con SB 🔍\n")
     sb.activate_cdp_mode(url)
     sb.uc_gui_click_captcha()
@@ -153,9 +153,8 @@ with SB(uc=True) as sb:
 
     # 2) reCAPTCHA v2 / v3 / invisible
     recaptcha_selectors = [
-        "div.g-recaptcha",
-        "div.recaptcha-checkbox",  # checkbox visible en v2
-        ".grecaptcha-badge",  # visible en invisible v3
+        "span.recaptcha-checkbox",  # checkbox visible en v2
+        "div.grecaptcha-badge",  # visible en invisible v3
     ]
 
     # use SB instead of simple search - DONE
