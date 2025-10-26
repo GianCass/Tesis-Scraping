@@ -137,29 +137,23 @@ def guardar_html(contenido):
 
 
 
-with SB(uc=True, block_images=True) as sb:
+with SB(uc=True, xvfb=True) as sb:
     logging.info(f"🔍 Cargando: {url} con SB 🔍\n")
-    sb.activate_cdp_mode(url)
+    # sb.activate_cdp_mode(url)
+    sb.uc_open_with_reconnect(url, 5)
     sb.uc_gui_click_captcha()
-    sb.cdp.sleep(5)
-
+    sb.sleep(5)
 
     dominio = urlparse(url).netloc
     logging.info(dominio)
     price_selectors = selectors.get(dominio, [])
     logging.info(price_selectors)
 
-    # if (dominio == "www.maxipali.co.cr"):
-    #      print("Contenido visible detras el banner, si es que aparecio")
-    # elif (dominio == "despensa.bodegaaurrera.com.mx"):
-    #      print("Contenido visible detras el banner, si es que aparecio")
-
-
     # Espera por precio dinámico => Pagina cargada completamente - DONE
     for selector in price_selectors:
         logging.info(selector)
         try:
-            sb.cdp.wait_for_element_visible(selector, timeout=250)
+            sb.wait_for_element(selector, timeout=250)
             # print(f"✅ Precio detectado en {selector}")
             break
         except Exception as e:
@@ -168,7 +162,7 @@ with SB(uc=True, block_images=True) as sb:
 
 
     # HTML de la pagina - DONE
-    page_source = sb.cdp.get_page_source()
+    page_source = sb.get_page_source()
 
 
     status_captcha = False
@@ -195,14 +189,14 @@ with SB(uc=True, block_images=True) as sb:
     # use SB instead of simple search - DONE
     if captcha_tipo == "recaptcha" or captcha_tipo == "no":
         for selector in recaptcha_selectors:
-            if sb.cdp.is_element_visible(selector):
+            if sb.is_element_visible(selector):
                 status_captcha = True
                 tipo_captcha_detectado = "recaptcha"
                 break
 
     if captcha_tipo == "cloudflare" or captcha_tipo == "no":
         for selector in cloudflare_selectors:
-            if sb.cdp.is_element_visible(selector):
+            if sb.is_element_visible(selector):
                 status_captcha = True
                 tipo_captcha_detectado = "cloudflare"
                 break
@@ -215,14 +209,16 @@ with SB(uc=True, block_images=True) as sb:
     if(status_captcha):
         if (tipo_captcha_detectado == "cloudflare"):
             try:
+                sb.wait(5)
                 sb.uc_gui_click_captcha()
-                resolved_html = sb.cdp.get_page_source()
+                resolved_html = sb.get_page_source()
             except Exception as e:
                 resolved_html = captcha.cloudflare(url)
         elif (tipo_captcha_detectado == "recaptcha"):
             try:
+                sb.wait(5)
                 sb.uc_gui_click_captcha()
-                resolved_html = sb.cdp.get_page_source()
+                resolved_html = sb.get_page_source()
             except Exception as e:
                 resolved_html = captcha.recaptcha(url)
         guardar_html(resolved_html)
